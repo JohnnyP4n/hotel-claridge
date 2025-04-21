@@ -232,9 +232,10 @@ section {
 
 /* Extra info */
 .rate-info p {
-  margin-bottom: 0.5rem;
-  font-size: 0.95rem;
-  color: #5b4c3b;
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  color: #3b2f2f; /* zelfde kleur als gewone tekst */
+  font-weight: normal;
 }
 
 
