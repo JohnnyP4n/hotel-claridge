@@ -51,9 +51,9 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: 2rem;
   background-color: #3b2f2f;
-  padding: 0.8rem 2rem;
+  padding: 0.4rem 1.5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* optionele schaduw voor diepte */
 }
 
@@ -64,7 +64,7 @@ h3 {
 }
 
 .logo {
-  max-width: 220px;
+  max-width: 140px;
   height: auto;
   border-radius: 20px;
 }
