@@ -368,18 +368,65 @@ button {
   border: 0;
 }
 
+/* ================================
+   Aanvraagpagina: Boeking
+================================= */
+
+/* Titel spacing */
+#booking h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Inleidingstekst */
+.booking-intro {
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+  color: #3b2f2f;
+  text-align: center;
+}
+
 #booking-form {
   background-color: #fffefb;
   padding: 2rem;
   border: 1px solid #c19a6b;
   border-radius: 10px;
-  max-width: 600px;
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  justify-content: center;
 }
 
+
+/* Fieldsets naast elkaar */
+#booking-form fieldset {
+  flex: 1 1 400px; /* minimaal 400px breed, groeit mee */
+  border: 1px solid #c19a6b;
+  padding: 2rem;
+  border-radius: 10px;
+  background-color: #fffefb;
+}
+
+/* Zorg dat legend mooi blijft */
+#booking-form legend {
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: #7c5e45;
+  margin-bottom: 1rem;
+}
+
+
+/* Labels */
+#booking-form label {
+  margin-bottom: 0.5rem; /* Meer ruimte onder label */
+  font-weight: bold;
+  display: block;
+}
+
+/* Inputvelden, selectievakjes en tekstvakken */
 #booking-form input,
 #booking-form select,
 #booking-form textarea {
@@ -389,8 +436,19 @@ button {
   border-radius: 5px;
   font-size: 1rem;
   background-color: #fffefb;
+  margin-bottom: 1.2rem; /* Ruimte onder elk input */
 }
 
+/* Focusstijl bij aanklikken */
+#booking-form input:focus,
+#booking-form select:focus,
+#booking-form textarea:focus {
+  border-color: #c19a6b;
+  outline: none;
+  box-shadow: 0 0 5px rgba(193, 154, 107, 0.5);
+}
+
+/* Verzendknop */
 #booking-form button {
   background-color: #c19a6b;
   color: white;
@@ -400,8 +458,10 @@ button {
   border-radius: 5px;
   border: none;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+/* Verzendknop hover-effect */
 #booking-form button:hover {
   background-color: #a8835f;
 }

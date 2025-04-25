@@ -29,35 +29,55 @@
     <div class="container">
         <section id="booking">
             <h2>Vraag uw verblijf aan</h2>
+            <p class="booking-intro">
+                Vul onderstaand formulier in om een verblijf aan te vragen.<br>
+                Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.
+            </p>
+
             <form id="booking-form">
-                <label for="name">Naam:</label>
-                <input type="text" id="name" name="name" required>
 
-                <label for="email">E-mail:</label>
-                <input type="email" id="email" name="email" required>
+                <fieldset>
+                    <legend>Jouw Gegevens</legend>
 
-                <label for="room-type">Kamer Type:</label>
-                <select id="room-type" name="room-type" required>
-                    <option value="Type A">Type A - Comfortkamer met bad/toilet</option>
-                    <option value="Type B">Type B - Comfortkamer met douche/toilet</option>
-                    <option value="Type C">Type C - Standaardkamer met douche/toilet</option>
-                    <option value="Familiekamer">Familiekamer</option>
-                </select>
+                    <label for="name">Naam:</label>
+                    <input type="text" id="name" name="name" required>
 
-                <label for="checkin">Aankomstdatum:</label>
-                <input type="date" id="checkin" name="checkin" required>
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required>
 
-                <label for="checkout">Vertrekdatum:</label>
-                <input type="date" id="checkout" name="checkout" required>
+                    <label for="phone">GSM-nummer (optioneel):</label>
+                    <input type="tel" id="phone" name="phone" placeholder="bijv. +32 123 45 67 89">
+                </fieldset>
 
-                <label for="guests">Aantal Personen:</label>
-                <input type="number" id="guests" name="guests" min="1" max="4" required>
+                <fieldset>
+                    <legend>Uw Aanvraag</legend>
 
-                <label for="remarks">Opmerkingen (optioneel):</label>
-                <textarea id="remarks" name="remarks" rows="4"></textarea>
+                    <label for="checkin">Aankomstdatum:</label>
+                    <input type="date" id="checkin" name="checkin" required>
+
+                    <label for="checkout">Vertrekdatum:</label>
+                    <input type="date" id="checkout" name="checkout" required>
+
+                    <label for="guests">Aantal Personen:</label>
+                    <input type="number" id="guests" name="guests" min="1" max="4" required>
+
+                    <label for="room-type">Gewenste Kamertype:</label>
+                    <select id="room-type" name="room-type" required>
+                        <option value="" disabled selected hidden>Kies een kamer</option>
+                        <option value="Type A">Type A - Comfortkamer met bad/toilet</option>
+                        <option value="Type B">Type B - Comfortkamer met douche/toilet</option>
+                        <option value="Type C">Type C - Standaardkamer met douche/toilet</option>
+                        <option value="Familiekamer">Familiekamer</option>
+                    </select>
+
+                    <label for="remarks">Opmerkingen (optioneel):</label>
+                    <textarea id="remarks" name="remarks" rows="4"></textarea>
+                </fieldset>
 
                 <button type="submit">Vraag verblijf aan</button>
+
             </form>
+
         </section>
     </div>
 </main>
@@ -66,15 +86,7 @@
     <p>&copy; 2025 Hotel Claridge - Alle rechten voorbehouden</p>
 </footer>
 
-<script>
-    const bookingForm = document.getElementById('booking-form');
-
-    bookingForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Bedankt voor uw aanvraag! Wij controleren de beschikbaarheid en nemen spoedig contact met u op.');
-        bookingForm.reset();
-    });
-</script>
+<script src="../js/boeking.js"></script>
 
 </body>
 </html>
