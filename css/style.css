@@ -145,6 +145,30 @@ section {
   margin-top: 3rem;
 }
 
+#happytrip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  background-color: #f8f0dc;
+  border-left: 6px solid #c19a6b;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.happytrip-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.happytrip-text h2 {
+  margin-top: 0;
+  color: #3b2f2f;
+}
+
 /* ================================
    Kamers: kaartenweergave
 ================================= */
