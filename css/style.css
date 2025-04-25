@@ -85,10 +85,14 @@ nav a {
   text-decoration: none;
   font-weight: bold;
   font-size: 1.15rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 nav a:hover {
-  text-decoration: underline;
+  background-color: #f8f0dc;
+  color: #3b2f2f;
 }
 
 
@@ -98,7 +102,7 @@ nav a:hover {
 
 .hero {
   position: relative;
-  background: url('img/strand.jpg') no-repeat center center/cover;
+  background: url('../img/strand.jpg') no-repeat center center/cover;
   height: 70vh;
   display: flex;
   align-items: center;
@@ -137,6 +141,9 @@ section {
   margin-bottom: 3rem;
 }
 
+#intro {
+  margin-top: 3rem;
+}
 
 /* ================================
    Kamers: kaartenweergave
