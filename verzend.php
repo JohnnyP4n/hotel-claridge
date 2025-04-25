@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $opmerkingen = htmlspecialchars($_POST['remarks']);
 
     // Ontvanger
-    $to = "info@hotel-claridge.be"; // <-- Pas hier jouw hotel e-mailadres aan
+    $to = "hotelclaridge@msn.com"; // <-- Pas hier jouw hotel e-mailadres aan
 
     // Onderwerp van de e-mail
     $subject = "Nieuwe verblijf aanvraag via de website";
