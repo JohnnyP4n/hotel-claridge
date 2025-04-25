@@ -1,11 +1,10 @@
 to do
-- verschillende talen FR/EN/DU
+- snellere laadtijden foto's  en logo
 - omgeving en info tekst details
-- westtoer info
 - kamertypes klikbaar
 - email verzending voor contact via formulier
-- reserveringsformulier verzending via email
+- verschillende talen FR/EN/DU
 
 uitbreiding
+- reserveringsformulier verzending via email
 - eigen boekingssysteem
-- 
