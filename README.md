@@ -1,5 +1,5 @@
 to do
-- verschillende webpagina's
+- verschillende talen FR/EN/DU
 - omgeving en info tekst details
 - westtoer info
 - kamertypes klikbaar
