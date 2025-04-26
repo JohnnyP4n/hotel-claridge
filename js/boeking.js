@@ -6,8 +6,6 @@ function setMinimumDates() {
     const today = new Date();
     const todayStr = today.toISOString().split('T')[0];
     checkinInput.min = todayStr;
-
-    // vertrekdatum nog niet ingesteld bij laadmoment
     checkoutInput.min = '';
     checkoutInput.value = '';
 }
@@ -31,20 +29,17 @@ function validateDates() {
 }
 
 bookingForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (validateDates()) {
-        alert('Bedankt voor uw aanvraag! Wij controleren de beschikbaarheid en nemen spoedig contact met u op.');
-        bookingForm.reset();
-        setMinimumDates();
+    if (!validateDates()) {
+        e.preventDefault(); // Alleen blokkeren als er een fout is
     }
 });
 
 checkinInput.addEventListener('change', function() {
     if (checkinInput.value) {
         const checkinDate = new Date(checkinInput.value);
-        checkinDate.setDate(checkinDate.getDate() + 1); // minimum vertrek 1 dag later
+        checkinDate.setDate(checkinDate.getDate() + 1);
         checkoutInput.min = checkinDate.toISOString().split('T')[0];
-        checkoutInput.value = ''; // leegmaken bij wijziging aankomst
+        checkoutInput.value = '';
     }
 });
 
