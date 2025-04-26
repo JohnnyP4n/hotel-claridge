@@ -94,7 +94,6 @@ nav a {
 nav a.active {
   background-color: #c19a6b;
   color: white;
-  padding: 0.4rem 0.8rem;
   border-radius: 8px;
   transition: background-color 0.3s ease;
 }
