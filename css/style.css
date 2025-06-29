@@ -126,8 +126,16 @@ nav a:hover {
   color: white;
 }
 
+.cta-button-group {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* op mobiel netjes onder elkaar */
+  gap: 1rem; /* ruimte tussen de knoppen, bijvoorbeeld 1rem */
+}
+
 .cta-button {
   display: inline-block;
+  width: 180px;
   margin-top: 1rem;
   padding: 0.5rem 1.2rem;
   background-color: #c19a6b;
@@ -135,6 +143,16 @@ nav a:hover {
   text-decoration: none;
   border-radius: 5px;
   font-weight: bold;
+}
+
+.cta-button:hover {
+  background-color: #f8f0dc;
+  color: #3b2f2f;
+}
+
+.booking-button {
+  background-color: #003580; /* Booking.com blauw */
+  color: white;
 }
 
 
