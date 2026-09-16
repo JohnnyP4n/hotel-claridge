@@ -1,0 +1,31 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/images/logo-16-9.png';
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/kamers/', label: 'Kamers' },
+  { href: '/tarieven/', label: 'Tarieven' },
+  { href: '/contact/', label: 'Contact' },
+  { href: '/boeking/', label: 'Vraag verblijf aan' },
+];
+
+// Slash op het einde weglaten, zodat /kamers en /kamers/ allebei als actief tellen
+const withoutSlash = (path: string) => path.replace(/\/$/, '') || '/';
+const currentPath = withoutSlash(Astro.url.pathname);
+---
+
+<div class="topbar">
+  <div class="logo-container">
+    <a href="/">
+      <Image src={logo} alt="Hotel Claridge Logo" class="logo" width={140} densities={[1, 2]} priority />
+    </a>
+  </div>
+  <nav>
+    <ul>
+      {links.map(({ href, label }) => (
+        <li><a href={href} class:list={{ active: withoutSlash(href) === currentPath }}>{label}</a></li>
+      ))}
+    </ul>
+  </nav>
+</div>

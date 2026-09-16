@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import roomShower from '../assets/images/kamermetdouche.jpeg';
+import roomBath from '../assets/images/kamermetbad.jpeg';
+import roomTwin from '../assets/images/kamertwin.jpeg';
+import roomFamily from '../assets/images/familiekamer.jpeg';
+
+// Kaarten zijn maximaal 400px breed, op een gsm de volle breedte
+const cardImage = { width: 1200, widths: [400, 800, 1200], sizes: '(max-width: 500px) 100vw, 400px' };
+---
+
+<Layout title="Kamers">
+  <main>
+    <div class="container">
+      <section id="rooms">
+        <h2>Onze Kamers</h2>
+        <div class="room-cards">
+          <div class="room-card">
+            <Image src={roomShower} alt="Standaardkamer" {...cardImage} />
+            <h3>Type C</h3>
+            <p>Kleine kamer met douche/toilet - tweepersoonsbed</p>
+            <p><strong>Let op:</strong> geen extra bed mogelijk</p>
+          </div>
+
+          <div class="room-card">
+            <Image src={roomBath} alt="Comfortkamer met bad" {...cardImage} />
+            <h3>Type A</h3>
+            <p>Comfortkamer met bad/toilet - tweepersoonsbed</p>
+            <p><strong>Faciliteiten:</strong> minibar, waterkoker, tv</p>
+          </div>
+
+          <div class="room-card">
+            <Image src={roomTwin} alt="Comfortkamer met douche en twee aparte bedden" {...cardImage} />
+            <h3>Type B</h3>
+            <p>Comfortkamer met douche/toilet - twee aparte bedden</p>
+            <p><strong>Faciliteiten:</strong> minibar, waterkoker, tv</p>
+          </div>
+
+          <div class="room-card">
+            <Image src={roomFamily} alt="Familiekamer" {...cardImage} />
+            <h3>Familiekamer</h3>
+            <p>Ruimte voor 4 personen, met extra comfort</p>
+            <p><strong>Faciliteiten:</strong> minibar, waterkoker, tv</p>
+          </div>
+        </div>
+      </section>
+
+      <p style="margin-top: 2rem;">
+        🎉 Boek rechtstreeks bij ons en ontvang het <strong>Happy Trip gastenvoordeel</strong> – korting op treinvervoer naar de kust!
+      </p>
+    </div>
+  </main>
+</Layout>
