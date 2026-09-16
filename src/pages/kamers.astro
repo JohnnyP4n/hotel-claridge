@@ -1,54 +1,111 @@
 ---
-import { Image } from 'astro:assets';
+import Check from '@lucide/astro/icons/check';
+import TrainFront from '@lucide/astro/icons/train-front';
+import CtaBand from '../components/CtaBand.astro';
+import PageHeader from '../components/PageHeader.astro';
+import RoomCard from '../components/RoomCard.astro';
 import Layout from '../layouts/Layout.astro';
-import roomShower from '../assets/images/kamermetdouche.jpeg';
-import roomBath from '../assets/images/kamermetbad.jpeg';
-import roomTwin from '../assets/images/kamertwin.jpeg';
-import roomFamily from '../assets/images/familiekamer.jpeg';
-
-// Kaarten zijn maximaal 400px breed, op een gsm de volle breedte
-const cardImage = { width: 1200, widths: [400, 800, 1200], sizes: '(max-width: 500px) 100vw, 400px' };
+import headerImage from '../assets/images/kamermetbad.jpeg';
+import { includedInEveryRoom, rooms } from '../data/rooms';
 ---
 
-<Layout title="Kamers">
-  <main>
+<Layout
+  title="Kamers"
+  description="Ontdek de kamers van Hotel Claridge in Blankenberge: comfortkamers met bad of douche, een standaardkamer en een familiekamer voor 4 personen."
+>
+  <PageHeader
+    eyebrow="Kamers"
+    title="Onze kamers"
+    intro="Comfortabele kamers met een huiselijke sfeer, op 200 meter van het strand."
+    image={headerImage}
+    imagePosition="center 60%"
+  />
+
+  <section class="section">
     <div class="container">
-      <section id="rooms">
-        <h2>Onze Kamers</h2>
-        <div class="room-cards">
-          <div class="room-card">
-            <Image src={roomShower} alt="Standaardkamer" {...cardImage} />
-            <h3>Type C</h3>
-            <p>Kleine kamer met douche/toilet - tweepersoonsbed</p>
-            <p><strong>Let op:</strong> geen extra bed mogelijk</p>
-          </div>
+      <div class="included card">
+        <h2>Inbegrepen bij elke kamer</h2>
+        <ul>
+          {includedInEveryRoom.map((item) => <li><Check size={18} /> {item}</li>)}
+        </ul>
+      </div>
 
-          <div class="room-card">
-            <Image src={roomBath} alt="Comfortkamer met bad" {...cardImage} />
-            <h3>Type A</h3>
-            <p>Comfortkamer met bad/toilet - tweepersoonsbed</p>
-            <p><strong>Faciliteiten:</strong> minibar, waterkoker, tv</p>
-          </div>
+      <div class="rooms-grid">
+        {rooms.map((room) => <RoomCard room={room} />)}
+      </div>
 
-          <div class="room-card">
-            <Image src={roomTwin} alt="Comfortkamer met douche en twee aparte bedden" {...cardImage} />
-            <h3>Type B</h3>
-            <p>Comfortkamer met douche/toilet - twee aparte bedden</p>
-            <p><strong>Faciliteiten:</strong> minibar, waterkoker, tv</p>
-          </div>
-
-          <div class="room-card">
-            <Image src={roomFamily} alt="Familiekamer" {...cardImage} />
-            <h3>Familiekamer</h3>
-            <p>Ruimte voor 4 personen, met extra comfort</p>
-            <p><strong>Faciliteiten:</strong> minibar, waterkoker, tv</p>
-          </div>
-        </div>
-      </section>
-
-      <p style="margin-top: 2rem;">
-        🎉 Boek rechtstreeks bij ons en ontvang het <strong>Happy Trip gastenvoordeel</strong> – korting op treinvervoer naar de kust!
+      <p class="happytrip-note">
+        <TrainFront size={22} />
+        <span>Boek rechtstreeks bij ons en ontvang het <strong>Happy Trip gastenvoordeel</strong> – korting op treinvervoer naar de kust!</span>
       </p>
     </div>
-  </main>
+  </section>
+
+  <CtaBand />
 </Layout>
+
+<style>
+  .included {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: 2.5rem;
+    padding: 1.5rem 2rem;
+  }
+
+  .included h2 {
+    font-size: 1.5rem;
+  }
+
+  .included ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .included li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+  }
+
+  .included :global(svg) {
+    color: var(--color-primary);
+  }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .happytrip-note {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--color-sand);
+    border-radius: var(--radius);
+  }
+
+  .happytrip-note :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 820px) {
+    .rooms-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .included {
+      padding: 1.5rem;
+    }
+  }
+</style>

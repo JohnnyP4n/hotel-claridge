@@ -1,62 +1,208 @@
 ---
+import Mail from '@lucide/astro/icons/mail';
+import MapPin from '@lucide/astro/icons/map-pin';
+import Phone from '@lucide/astro/icons/phone';
+import Smartphone from '@lucide/astro/icons/smartphone';
+import TrainFront from '@lucide/astro/icons/train-front';
+import PageHeader from '../components/PageHeader.astro';
 import Layout from '../layouts/Layout.astro';
+import headerImage from '../assets/images/pier.jpg';
+import { hotel } from '../data/hotel';
 ---
 
-<Layout title="Contact">
-  <main>
-    <div class="container">
-      <section id="contact">
-        <h2>Contacteer ons</h2>
+<Layout
+  title="Contact"
+  description="Contacteer Hotel Claridge, de Limburg Stirumstraat 2, 8370 Blankenberge. Bel +32 50 42 66 88 of stuur ons een e-mail."
+>
+  <PageHeader
+    eyebrow="Contact"
+    title="Contacteer ons"
+    intro="Een vraag over uw verblijf? Wij helpen u graag verder."
+    image={headerImage}
+  />
 
-        <div class="contact-wrapper">
-          <p>
-            Ben je van plan met de trein te komen? Laat het ons weten bij je reservatie en ontvang een <strong>Happy Trip kortingscode</strong> voor je reis!
-          </p>
-          <div class="contact-info">
-            <p><i class="fa-solid fa-location-dot"></i>
-              <span>
-                Hotel Claridge<br />
-                de Limburg Stirumstraat 2<br />
-                8370 Blankenberge
-              </span>
-            </p>
+  <section class="section" id="contact">
+    <div class="container contact-grid">
+      <div class="details">
+        <h2>Contactgegevens</h2>
+        <ul class="contact-list">
+          <li>
+            <span class="icon"><MapPin size={20} /></span>
+            <div>
+              <strong>Adres</strong>
+              <span>{hotel.name}<br />{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}</span>
+            </div>
+          </li>
+          <li>
+            <span class="icon"><Phone size={20} /></span>
+            <div>
+              <strong>Telefoon</strong>
+              <a href={hotel.phone.href}>{hotel.phone.label}</a>
+            </div>
+          </li>
+          <li>
+            <span class="icon"><Smartphone size={20} /></span>
+            <div>
+              <strong>Gsm</strong>
+              <a href={hotel.mobile.href}>{hotel.mobile.label}</a>
+            </div>
+          </li>
+          <li>
+            <span class="icon"><Mail size={20} /></span>
+            <div>
+              <strong>E-mail</strong>
+              {hotel.emails.map((email) => <a href={`mailto:${email}`}>{email}</a>)}
+            </div>
+          </li>
+        </ul>
 
-            <p><i class="fa-solid fa-phone"></i>
-              <span>+32 50 42 66 88</span>
-            </p>
+        <p class="happytrip-note">
+          <TrainFront size={22} />
+          <span>Ben je van plan met de trein te komen? Laat het ons weten bij je reservatie en ontvang een <strong>Happy Trip kortingscode</strong> voor je reis!</span>
+        </p>
+      </div>
 
-            <p><i class="fa-solid fa-mobile-screen-button"></i>
-              <span>+32 476 68 88 88</span>
-            </p>
-
-            <p><i class="fa-solid fa-envelope"></i>
-              <span>
-                <a href="mailto:info@hotel-claridge.be">info@hotel-claridge.be</a><br />
-                <a href="mailto:hotelclaridge@msn.com">hotelclaridge@msn.com</a>
-              </span>
-            </p>
+      <div class="form-card card">
+        <h2>Stuur ons een bericht</h2>
+        <form id="contact-form">
+          <div class="field">
+            <label for="contact-name">Naam</label>
+            <input type="text" id="contact-name" autocomplete="name" required />
           </div>
-
-          <form id="contact-form">
-            <input type="text" placeholder="Naam" required />
-            <input type="email" placeholder="E-mail" required />
-            <textarea placeholder="Bericht" required></textarea>
-            <button type="submit">Verstuur</button>
-          </form>
-        </div>
-
-        <div class="map-container">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4402.822345914325!2d3.1224820735192624!3d51.3121768219327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c359d06ad375ab%3A0xd74044230ed0ef0!2sHotel%20Claridge!5e0!3m2!1snl!2sbe!4v1745256436132!5m2!1snl!2sbe"
-            width="100%"
-            height="400"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
-      </section>
+          <div class="field">
+            <label for="contact-email">E-mail</label>
+            <input type="email" id="contact-email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="contact-message">Bericht</label>
+            <textarea id="contact-message" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Verstuur</button>
+        </form>
+      </div>
     </div>
-  </main>
+
+    <div class="container">
+      <div class="map card">
+        <iframe
+          src={hotel.mapEmbedUrl}
+          title="Ligging van Hotel Claridge op Google Maps"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  h2 {
+    margin-bottom: 1.75rem;
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+  }
+
+  .contact-list {
+    display: grid;
+    gap: 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .contact-list div {
+    display: grid;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-list strong {
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .contact-list a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .contact-list a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    border-radius: 999px;
+  }
+
+  .happytrip-note {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background-color: var(--color-sand);
+    border-radius: var(--radius);
+  }
+
+  .happytrip-note :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-primary);
+  }
+
+  .form-card {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  form {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  form .btn {
+    justify-self: start;
+  }
+
+  .map {
+    margin-top: clamp(3rem, 6vw, 4.5rem);
+    overflow: hidden;
+  }
+
+  .map iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 21 / 9;
+    border: 0;
+  }
+
+  @media (max-width: 860px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .map iframe {
+      aspect-ratio: 1 / 1;
+    }
+  }
+</style>

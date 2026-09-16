@@ -1,0 +1,223 @@
+---
+import { Image } from 'astro:assets';
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import Bath from '@lucide/astro/icons/bath';
+import BedDouble from '@lucide/astro/icons/bed-double';
+import Check from '@lucide/astro/icons/check';
+import Info from '@lucide/astro/icons/info';
+import Users from '@lucide/astro/icons/users';
+import { bookingPath } from '../data/hotel';
+import type { Room } from '../data/rooms';
+
+interface Props {
+  room: Room;
+  /** 'compact' voor het overzicht op de homepage, 'full' voor de kamerpagina */
+  variant?: 'compact' | 'full';
+}
+
+const { room, variant = 'full' } = Astro.props;
+const isFull = variant === 'full';
+const showCode = room.code !== room.name;
+const sizes = isFull
+  ? '(max-width: 820px) 100vw, 580px'
+  : '(max-width: 560px) 100vw, (max-width: 1000px) 50vw, 290px';
+const bookingHref = `${bookingPath}?kamer=${encodeURIComponent(room.code)}`;
+---
+
+<article class:list={['room-card', variant]} id={isFull ? room.id : undefined}>
+  <div class="media">
+    <Image src={room.image} alt={room.imageAlt} width={1200} widths={[400, 800, 1200]} sizes={sizes} />
+    {showCode && <span class="badge">{room.code}</span>}
+  </div>
+
+  <div class="body">
+    <h3>
+      {isFull ? room.name : <a href={`/kamers/#${room.id}`} class="stretched">{room.name}</a>}
+    </h3>
+
+    {isFull && (
+      <>
+        <p class="summary">{room.summary}</p>
+        <ul class="facts">
+          <li><Users size={18} /> {room.guests}</li>
+          {room.bed && <li><BedDouble size={18} /> {room.bed}</li>}
+          {room.bathroom && <li><Bath size={18} /> {room.bathroom}</li>}
+        </ul>
+        {room.extras.length > 0 && (
+          <ul class="extras">
+            {room.extras.map((extra) => <li><Check size={15} /> {extra}</li>)}
+          </ul>
+        )}
+        {room.note && <p class="note"><Info size={17} /> {room.note}</p>}
+      </>
+    )}
+
+    <div class="footer">
+      <p class="price">
+        <span>vanaf</span> <strong>&euro; {room.price.low}</strong> <span>per nacht</span>
+      </p>
+      {isFull
+        ? <a href={bookingHref} class="btn btn-outline">Vraag deze kamer aan</a>
+        : <span class="more" aria-hidden="true"><ArrowRight size={20} /></span>}
+    </div>
+  </div>
+</article>
+
+<style>
+  .room-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .room-card:hover {
+    box-shadow: var(--shadow);
+  }
+
+  .compact:hover {
+    transform: translateY(-4px);
+  }
+
+  .media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+  }
+
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .room-card:hover .media :global(img) {
+    transform: scale(1.04);
+  }
+
+  .badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.3rem 0.8rem;
+    background-color: rgb(255 255 255 / 0.92);
+    color: var(--color-heading);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+
+  .full .body {
+    padding: 1.75rem 2rem 2rem;
+  }
+
+  .compact h3 {
+    font-size: 1.45rem;
+  }
+
+  .stretched {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Hele kaart klikbaar maken */
+  .stretched::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .summary {
+    color: var(--color-muted);
+  }
+
+  .facts,
+  .extras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .facts li,
+  .extras li,
+  .note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .facts :global(svg) {
+    color: var(--color-primary);
+  }
+
+  .extras li {
+    padding: 0.25rem 0.75rem;
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary-dark);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .note {
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .price {
+    color: var(--color-muted);
+    font-size: 0.92rem;
+  }
+
+  .price strong {
+    font-family: var(--font-serif);
+    font-variant-numeric: lining-nums;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    border-radius: 999px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .room-card:hover .more {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+</style>

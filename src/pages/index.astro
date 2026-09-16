@@ -1,55 +1,357 @@
 ---
 import { Image } from 'astro:assets';
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import EggFried from '@lucide/astro/icons/egg-fried';
+import ExternalLink from '@lucide/astro/icons/external-link';
+import MapPin from '@lucide/astro/icons/map-pin';
+import TrainFront from '@lucide/astro/icons/train-front';
+import WavesHorizontal from '@lucide/astro/icons/waves-horizontal';
+import CtaBand from '../components/CtaBand.astro';
+import RoomCard from '../components/RoomCard.astro';
 import Layout from '../layouts/Layout.astro';
 import beach from '../assets/images/strand.jpg';
+import hotelBuilding from '../assets/images/hotel.jpeg';
+import monogram from '../assets/images/logo-bol.png';
 import happyTripBanner from '../assets/images/happytrip-banner.jpg';
+import { bookingPath, hotel } from '../data/hotel';
+import { rooms } from '../data/rooms';
+
+const highlights = [
+  { icon: WavesHorizontal, title: '200 m van het strand', text: 'Zee en zand op wandelafstand' },
+  { icon: MapPin, title: 'Centraal gelegen', text: 'Rustig tussen jachthaven en station' },
+  { icon: EggFried, title: 'Vers ontbijt', text: 'Elke ochtend, met gebakken eieren en spek' },
+  { icon: TrainFront, title: 'Happy Trip', text: 'Korting op uw treinreis naar de kust' },
+];
 ---
 
-<Layout>
-  <!-- Inhoud homepage -->
-  <header>
-    <div class="hero">
-      <Image src={beach} alt="" class="hero-bg" width={2400} widths={[640, 1024, 1600, 2400]} sizes="100vw" priority />
-      <div class="overlay">
-        <h1>Hotel Claridge</h1>
-        <p>Charmant verblijf in het hart van Blankenberge</p>
-        <div class="cta-button-group">
-          <a href="/contact/" class="cta-button">Contacteer ons</a>
-          <a href="https://www.booking.com/hotel/be/claridge.nl.html" target="_blank" class="cta-button booking-button">Booking.com</a>
+<Layout description="Hotel Claridge is een charmant hotel in het hart van Blankenberge, op 200 meter van het strand. Comfortabele kamers, vers ontbijt en een huiselijke sfeer.">
+  <section class="hero">
+    <div class="hero-media">
+      <Image src={beach} alt="" width={2400} widths={[640, 1024, 1600, 2400]} sizes="100vw" priority />
+    </div>
+    <div class="container hero-content">
+      <p class="eyebrow">Blankenberge &middot; Belgische kust</p>
+      <h1>Hotel Claridge</h1>
+      <p class="hero-lead">Charmant verblijf in het hart van Blankenberge, op slechts 200 meter van het strand.</p>
+      <div class="btn-group">
+        <a href={bookingPath} class="btn btn-primary">Vraag verblijf aan</a>
+        <a href={hotel.bookingUrl} target="_blank" rel="noopener" class="btn btn-ghost-light">
+          Boek via Booking.com <ExternalLink />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <ul class="highlights card">
+      {highlights.map(({ icon: Icon, title, text }) => (
+        <li>
+          <span class="highlight-icon"><Icon size={22} /></span>
+          <div>
+            <strong>{title}</strong>
+            <span>{text}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <section class="section" id="intro">
+    <div class="container intro">
+      <div class="prose">
+        <p class="eyebrow">Welkom</p>
+        <h2>Welkom bij Hotel Claridge</h2>
+        <p><strong>Hotel Claridge</strong> is een charmant hotel in het hart van Blankenberge,
+          rustig gelegen tussen de jachthaven en het station, op slechts <strong>200 meter van het strand</strong>.</p>
+
+        <p>Dankzij onze <strong>centrale ligging</strong> bereikt u vlot de zee, winkels, restaurants en bezienswaardigheden.
+          Perfect voor een ontspannen verblijf aan de Belgische kust.</p>
+
+        <p>Wij bieden <strong>comfortabele kamers, een hartelijke service en een huiselijke sfeer</strong>.
+          Ideaal voor een romantisch weekendje, familievakantie of een verfrissende break aan zee.</p>
+
+        <p>Elke ochtend verwennen wij u met een vers <strong>ontbijt</strong>, inclusief dagelijks
+          <strong>vers gebakken eieren met spek</strong> en gekookte eieren – een heerlijke start van uw dag!</p>
+
+        <p>Kom <strong>genieten</strong> van de frisse zeelucht, het zachte zand en de warme gastvrijheid van Hotel Claridge.
+          Wij kijken ernaar uit u te mogen ontvangen!</p>
+      </div>
+
+      <figure class="intro-media">
+        <Image src={hotelBuilding} alt="De gevel van Hotel Claridge in Blankenberge" width={800} widths={[400, 800]} sizes="(max-width: 900px) 90vw, 440px" />
+        <Image src={monogram} alt="" width={96} densities={[1, 2]} class="monogram" />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-sand" id="kamers">
+    <div class="container">
+      <div class="rooms-head">
+        <div class="section-head">
+          <p class="eyebrow">Kamers</p>
+          <h2>Onze kamers</h2>
+          <p>Comfortkamers, een standaardkamer en een familiekamer voor 4 personen. Het ontbijt is altijd inbegrepen.</p>
+        </div>
+        <a href="/kamers/" class="link-arrow">Alle kamers bekijken <ArrowRight /></a>
+      </div>
+      <div class="rooms-grid">
+        {rooms.map((room) => <RoomCard room={room} variant="compact" />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="happytrip">
+    <div class="container">
+      <div class="happytrip card">
+        <Image src={happyTripBanner} alt="Happy Trip voordeel" class="happytrip-img" />
+        <div class="happytrip-text">
+          <div>
+            <p class="eyebrow">Met de trein naar zee</p>
+            <h2>Happy Trip voordeel voor onze gasten</h2>
+          </div>
+          <div>
+            <p>
+              Boek rechtstreeks bij ons en ontvang <strong>kortingscodes</strong> voor je treinreis naar de kust!<br />
+              Slechts € 14 heen en terug, vanuit élk Belgisch station. Geen parkeerstress. Geen extra kosten.
+            </p>
+            <p><strong>Vraag je Happy Trip-korting aan bij je boeking!</strong></p>
+            <a href={bookingPath} class="btn btn-primary">Vraag verblijf aan</a>
+          </div>
         </div>
       </div>
     </div>
-  </header>
+  </section>
 
-  <main class="container">
-    <section id="intro">
-      <h2>Welkom bij Hotel Claridge</h2>
-      <p><strong>Hotel Claridge</strong> is een charmant hotel in het hart van Blankenberge,
-        rustig gelegen tussen de jachthaven en het station, op slechts <strong>200 meter van het strand</strong>.</p>
-
-      <p>Dankzij onze <strong>centrale ligging</strong> bereikt u vlot de zee, winkels, restaurants en bezienswaardigheden.
-        Perfect voor een ontspannen verblijf aan de Belgische kust.</p>
-
-      <p>Wij bieden <strong>comfortabele kamers, een hartelijke service en een huiselijke sfeer</strong>.
-        Ideaal voor een romantisch weekendje, familievakantie of een verfrissende break aan zee.</p>
-
-      <p>Elke ochtend verwennen wij u met een vers <strong>ontbijt</strong>, inclusief dagelijks
-        <strong>vers gebakken eieren met spek</strong> en gekookte eieren – een heerlijke start van uw dag!</p>
-
-      <p>Kom <strong>genieten</strong> van de frisse zeelucht, het zachte zand en de warme gastvrijheid van Hotel Claridge.
-        Wij kijken ernaar uit u te mogen ontvangen!</p>
-    </section>
-
-    <section id="happytrip" class="highlight">
-      <Image src={happyTripBanner} alt="Happy Trip voordeel" class="happytrip-img" />
-      <div class="happytrip-text">
-        <h2>Happy Trip voordeel voor onze gasten</h2>
-        <p>
-          Boek rechtstreeks bij ons en ontvang <strong>kortingscodes</strong> voor je treinreis naar de kust!<br />
-          Slechts € 14 heen en terug, vanuit élk Belgisch station. Geen parkeerstress. Geen extra kosten.
-        </p>
-        <p><strong>Vraag je Happy Trip-korting aan bij je boeking!</strong></p>
-      </div>
-    </section>
-  </main>
+  <CtaBand />
 </Layout>
+
+<style>
+  /* Hero */
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: clamp(540px, 82vh, 780px);
+    padding-block: 4rem 7rem;
+    overflow: hidden;
+    color: #fff;
+  }
+
+  .hero-media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgb(21 34 32 / 0.7) 0%, rgb(21 34 32 / 0.3) 55%, rgb(21 34 32 / 0) 100%),
+      linear-gradient(to top, rgb(21 34 32 / 0.35), transparent 40%);
+  }
+
+  .hero-content {
+    position: relative;
+  }
+
+  .hero .eyebrow {
+    color: var(--color-accent-light);
+  }
+
+  .hero h1 {
+    color: #fff;
+  }
+
+  .hero-lead {
+    max-width: 520px;
+    margin-block: 1.25rem 2.25rem;
+    color: rgb(255 255 255 / 0.9);
+    font-size: clamp(1.15rem, 2vw, 1.35rem);
+  }
+
+  /* Troeven, half over de hero */
+  .highlights {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: -4rem;
+    padding: 0;
+    list-style: none;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .highlights li + li {
+    border-left: 1px solid var(--color-line);
+  }
+
+  .highlights strong {
+    display: block;
+    font-size: 1.02rem;
+    line-height: 1.3;
+  }
+
+  .highlights span:not(.highlight-icon) {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--color-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+
+  .highlight-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    border-radius: 999px;
+  }
+
+  /* Welkom */
+  .intro {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    align-items: center;
+  }
+
+  .intro h2 {
+    margin-top: 0;
+  }
+
+  .intro-media {
+    position: relative;
+    justify-self: center;
+    max-width: 440px;
+  }
+
+  .intro-media > :global(img:first-child) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 40%;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .intro-media :global(.monogram) {
+    position: absolute;
+    bottom: -1.75rem;
+    left: -1.75rem;
+    width: 96px;
+    border: 6px solid var(--color-bg);
+    border-radius: 999px;
+  }
+
+  /* Kamers */
+  .rooms-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .rooms-head .section-head {
+    margin-bottom: 0;
+  }
+
+  .rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+
+  /* Happy Trip */
+  .happytrip {
+    overflow: hidden;
+  }
+
+  .happytrip :global(.happytrip-img) {
+    width: 100%;
+  }
+
+  .happytrip-text {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 1.5rem clamp(2rem, 5vw, 4rem);
+    padding: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .happytrip-text p + p {
+    margin-top: 1rem;
+  }
+
+  .happytrip-text .btn {
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 1000px) {
+    .highlights {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .highlights li:nth-child(3) {
+      border-left: 0;
+    }
+
+    .highlights li:nth-child(n + 3) {
+      border-top: 1px solid var(--color-line);
+    }
+
+    .rooms-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .happytrip-text {
+      grid-template-columns: 1fr;
+    }
+
+    .intro {
+      grid-template-columns: 1fr;
+    }
+
+    .intro-media {
+      margin-inline: 1.75rem 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .highlights {
+      grid-template-columns: 1fr;
+    }
+
+    .highlights li + li {
+      border-top: 1px solid var(--color-line);
+      border-left: 0;
+    }
+
+    .highlights li {
+      padding: 1.25rem;
+    }
+
+    .rooms-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

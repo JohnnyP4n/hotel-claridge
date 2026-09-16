@@ -1,3 +1,178 @@
-<footer>
-  <p>&copy; 2025 Hotel Claridge - Alle rechten voorbehouden</p>
+---
+import { Image } from 'astro:assets';
+import ExternalLink from '@lucide/astro/icons/external-link';
+import Mail from '@lucide/astro/icons/mail';
+import MapPin from '@lucide/astro/icons/map-pin';
+import Phone from '@lucide/astro/icons/phone';
+import Smartphone from '@lucide/astro/icons/smartphone';
+import logo from '../assets/images/logo-transparant.png';
+import { bookingPath, hotel, mainNav } from '../data/hotel';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container columns">
+    <div class="about">
+      <a href="/" class="brand">
+        <Image src={logo} alt="Hotel Claridge" width={150} densities={[1, 2]} />
+      </a>
+      <p>Charmant hotel in het hart van Blankenberge, op slechts 200 meter van het strand.</p>
+    </div>
+
+    <div>
+      <h2>Contact</h2>
+      <ul class="contact-list">
+        <li>
+          <MapPin size={18} />
+          <span>{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}</span>
+        </li>
+        <li>
+          <Phone size={18} />
+          <a href={hotel.phone.href}>{hotel.phone.label}</a>
+        </li>
+        <li>
+          <Smartphone size={18} />
+          <a href={hotel.mobile.href}>{hotel.mobile.label}</a>
+        </li>
+        <li>
+          <Mail size={18} />
+          <span class="emails">
+            {hotel.emails.map((email) => <a href={`mailto:${email}`}>{email}</a>)}
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Menu</h2>
+      <ul class="link-list">
+        {mainNav.map(({ href, label }) => <li><a href={href}>{label}</a></li>)}
+        <li><a href={bookingPath}>Vraag verblijf aan</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h2>Rechtstreeks boeken</h2>
+      <p>Boek rechtstreeks bij ons en ontvang het Happy Trip-voordeel voor uw treinreis naar de kust.</p>
+      <div class="actions">
+        <a href={bookingPath} class="btn btn-light">Vraag verblijf aan</a>
+        <a href={hotel.bookingUrl} class="external" target="_blank" rel="noopener">
+          Of boek via Booking.com <ExternalLink size={15} />
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container bottom">
+    <p>&copy; {year} Hotel Claridge &middot; Alle rechten voorbehouden</p>
+  </div>
 </footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding-top: clamp(3.5rem, 7vw, 5rem);
+    background-color: var(--color-dark);
+    color: var(--color-on-dark-muted);
+    font-size: 0.97rem;
+  }
+
+  .columns {
+    display: grid;
+    grid-template-columns: 1.2fr 1.3fr 0.8fr 1.3fr;
+    gap: 2.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .brand {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+  }
+
+  /* Zwart logo wit maken op de donkere achtergrond */
+  .brand :global(img) {
+    width: 150px;
+    filter: invert(1);
+  }
+
+  h2 {
+    margin-bottom: 1.1rem;
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  a:not(.btn) {
+    color: var(--color-on-dark);
+    text-decoration: none;
+  }
+
+  a:not(.btn):hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+
+  .contact-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .contact-list :global(svg) {
+    flex-shrink: 0;
+    margin-top: 0.3rem;
+    color: var(--color-accent-light);
+  }
+
+  .emails {
+    display: grid;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .link-list li + li {
+    margin-top: 0.5rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+    margin-top: 1.25rem;
+  }
+
+  .external {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .bottom {
+    padding-block: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.1);
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 1000px) {
+    .columns {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .columns {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

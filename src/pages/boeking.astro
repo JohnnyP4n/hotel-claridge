@@ -1,65 +1,231 @@
 ---
+import CalendarCheck from '@lucide/astro/icons/calendar-check';
+import Coffee from '@lucide/astro/icons/coffee';
+import ExternalLink from '@lucide/astro/icons/external-link';
+import Phone from '@lucide/astro/icons/phone';
+import TrainFront from '@lucide/astro/icons/train-front';
+import PageHeader from '../components/PageHeader.astro';
 import Layout from '../layouts/Layout.astro';
+import headerImage from '../assets/images/strand.jpg';
+import { hotel } from '../data/hotel';
+import { rooms } from '../data/rooms';
 ---
 
-<Layout title="Boeking">
-  <main>
-    <div class="container">
-      <section id="booking">
-        <h2>Vraag uw verblijf aan</h2>
-        <p class="booking-intro">
-          Vul onderstaand formulier in om een verblijf aan te vragen.<br />
-          Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.
-        </p>
+<Layout
+  title="Vraag verblijf aan"
+  description="Vraag rechtstreeks uw verblijf aan bij Hotel Claridge in Blankenberge. Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op."
+>
+  <PageHeader
+    eyebrow="Rechtstreeks boeken"
+    title="Vraag uw verblijf aan"
+    intro="Vul onderstaand formulier in om een verblijf aan te vragen. Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op."
+    image={headerImage}
+    imagePosition="center 65%"
+  />
 
-        <form id="booking-form" action="https://api.web3forms.com/submit" method="POST">
-          <input type="hidden" name="access_key" value="15a448c6-8d0b-4075-8d79-1e58ddbfc27b" />
+  <section class="section" id="booking">
+    <div class="container booking-grid">
+      <form id="booking-form" class="card" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="15a448c6-8d0b-4075-8d79-1e58ddbfc27b" />
 
-          <fieldset>
-            <legend>Jouw Gegevens</legend>
+        <fieldset>
+          <legend>Jouw gegevens</legend>
+          <div class="fields">
+            <div class="field wide">
+              <label for="name">Naam</label>
+              <input type="text" id="name" name="name" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" name="email" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label for="phone">Gsm-nummer <span class="optional">(optioneel)</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="bijv. +32 123 45 67 89" />
+            </div>
+          </div>
+        </fieldset>
 
-            <label for="name">Naam:</label>
-            <input type="text" id="name" name="name" required />
+        <fieldset>
+          <legend>Uw aanvraag</legend>
+          <div class="fields">
+            <div class="field">
+              <label for="checkin">Aankomstdatum</label>
+              <input type="date" id="checkin" name="checkin" required />
+            </div>
+            <div class="field">
+              <label for="checkout">Vertrekdatum</label>
+              <input type="date" id="checkout" name="checkout" required />
+            </div>
+            <div class="field">
+              <label for="guests">Aantal personen</label>
+              <input type="number" id="guests" name="guests" min="1" max="4" required />
+            </div>
+            <div class="field">
+              <label for="room-type">Gewenst kamertype</label>
+              <select id="room-type" name="room-type" required>
+                <option value="" disabled selected hidden>Kies een kamer</option>
+                {rooms.map((room) => (
+                  <option value={room.code}>{room.code !== room.name ? `${room.code} - ${room.name}` : room.name}</option>
+                ))}
+              </select>
+            </div>
+            <div class="field wide">
+              <label for="remarks">Opmerkingen <span class="optional">(optioneel)</span></label>
+              <textarea id="remarks" name="remarks" rows="4"></textarea>
+            </div>
+          </div>
+        </fieldset>
 
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email" required />
+        <button type="submit" class="btn btn-primary">Vraag verblijf aan</button>
+      </form>
 
-            <label for="phone">GSM-nummer (optioneel):</label>
-            <input type="tel" id="phone" name="phone" placeholder="bijv. +32 123 45 67 89" />
-          </fieldset>
+      <aside class="aside">
+        <div class="card aside-card">
+          <h2>Goed om te weten</h2>
+          <ul>
+            <li>
+              <CalendarCheck size={20} />
+              <span>Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.</span>
+            </li>
+            <li>
+              <Coffee size={20} />
+              <span>Het ontbijt is inbegrepen bij elke kamer.</span>
+            </li>
+            <li>
+              <TrainFront size={20} />
+              <span>Komt u met de trein? Vermeld het bij uw opmerkingen en ontvang een <strong>Happy Trip kortingscode</strong>.</span>
+            </li>
+          </ul>
+        </div>
 
-          <fieldset>
-            <legend>Uw Aanvraag</legend>
-
-            <label for="checkin">Aankomstdatum:</label>
-            <input type="date" id="checkin" name="checkin" required />
-
-            <label for="checkout">Vertrekdatum:</label>
-            <input type="date" id="checkout" name="checkout" required />
-
-            <label for="guests">Aantal Personen:</label>
-            <input type="number" id="guests" name="guests" min="1" max="4" required />
-
-            <label for="room-type">Gewenste Kamertype:</label>
-            <select id="room-type" name="room-type" required>
-              <option value="" disabled selected hidden>Kies een kamer</option>
-              <option value="Type A">Type A - Comfortkamer met bad/toilet</option>
-              <option value="Type B">Type B - Comfortkamer met douche/toilet</option>
-              <option value="Type C">Type C - Standaardkamer met douche/toilet</option>
-              <option value="Familiekamer">Familiekamer</option>
-            </select>
-
-            <label for="remarks">Opmerkingen (optioneel):</label>
-            <textarea id="remarks" name="remarks" rows="4"></textarea>
-          </fieldset>
-
-          <button type="submit">Vraag verblijf aan</button>
-        </form>
-      </section>
+        <div class="card aside-card">
+          <h2>Liever telefonisch?</h2>
+          <a href={hotel.phone.href} class="phone"><Phone size={20} /> {hotel.phone.label}</a>
+          <a href={hotel.bookingUrl} target="_blank" rel="noopener" class="external">
+            Of boek via Booking.com <ExternalLink size={15} />
+          </a>
+        </div>
+      </aside>
     </div>
-  </main>
+  </section>
 </Layout>
 
 <script>
   import '../scripts/boeking.js';
 </script>
+
+<style>
+  .booking-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  #booking-form {
+    display: grid;
+    gap: 2.5rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+  }
+
+  fieldset + fieldset {
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .wide {
+    grid-column: 1 / -1;
+  }
+
+  #booking-form .btn {
+    justify-self: start;
+    min-width: 220px;
+  }
+
+  .aside {
+    position: sticky;
+    top: calc(var(--header-height) + 1.5rem);
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .aside-card {
+    padding: 1.75rem;
+  }
+
+  .aside-card h2 {
+    margin-bottom: 1.25rem;
+    font-size: 1.6rem;
+  }
+
+  .aside-card ul {
+    display: grid;
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .aside-card li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    font-size: 0.97rem;
+  }
+
+  .aside-card li :global(svg) {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    color: var(--color-primary);
+  }
+
+  .phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--color-heading);
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-variant-numeric: lining-nums;
+    text-decoration: none;
+  }
+
+  .phone :global(svg) {
+    color: var(--color-primary);
+  }
+
+  .external {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 960px) {
+    .booking-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .aside {
+      position: static;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .fields {
+      grid-template-columns: 1fr;
+    }
+
+    #booking-form .btn {
+      justify-self: stretch;
+    }
+  }
+</style>

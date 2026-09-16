@@ -1,6 +1,18 @@
 const bookingForm = document.getElementById('booking-form');
 const checkinInput = document.getElementById('checkin');
 const checkoutInput = document.getElementById('checkout');
+const roomSelect = document.getElementById('room-type');
+
+// Kamertype vooraf kiezen als de bezoeker via "Vraag deze kamer aan" komt (bv. ?kamer=Type%20A)
+function preselectRoom() {
+    const requestedRoom = new URLSearchParams(window.location.search).get('kamer');
+    const exists = [...roomSelect.options].some((option) => option.value === requestedRoom);
+    if (requestedRoom && exists) {
+        roomSelect.value = requestedRoom;
+    }
+}
+
+preselectRoom();
 
 function setMinimumDates() {
     const today = new Date();

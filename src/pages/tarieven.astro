@@ -1,59 +1,292 @@
 ---
+import Baby from '@lucide/astro/icons/baby';
+import Check from '@lucide/astro/icons/check';
+import Coffee from '@lucide/astro/icons/coffee';
+import ReceiptEuro from '@lucide/astro/icons/receipt-euro';
+import CtaBand from '../components/CtaBand.astro';
+import PageHeader from '../components/PageHeader.astro';
 import Layout from '../layouts/Layout.astro';
+import headerImage from '../assets/images/familiekamer.jpeg';
+import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms';
 ---
 
-<Layout title="Tarieven">
-  <main>
-    <div class="container">
-      <section id="rates">
-        <h2>Tarieven</h2>
+<Layout
+  title="Tarieven"
+  description="Tarieven van Hotel Claridge in Blankenberge, ontbijt inbegrepen. Bekijk de prijzen per kamertype voor laag- en hoogseizoen."
+>
+  <PageHeader
+    eyebrow="Tarieven"
+    title="Tarieven"
+    intro="Heldere prijzen per kamertype, ontbijt altijd inbegrepen."
+    image={headerImage}
+  />
 
+  <section class="section" id="rates">
+    <div class="container">
+      <div class="table-card card">
         <table class="rates-table">
+          <caption class="sr-only">Prijzen per kamertype</caption>
           <thead>
             <tr>
-              <th>Type kamer</th>
-              <th>Laagseizoen<br /><small>vanaf</small></th>
-              <th>Hoogseizoen<br /><small>vanaf</small></th>
+              <th scope="col">Type kamer</th>
+              <th scope="col">Laagseizoen <span>vanaf</span></th>
+              <th scope="col">Hoogseizoen <span>vanaf</span></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Type A: Comfortkamer met bad/toilet - tweepersoonsbed</td>
-              <td>&euro; 110</td>
-              <td>&euro; 120</td>
-            </tr>
-            <tr>
-              <td>Type B: Comfortkamer met douche/toilet - twee aparte bedden</td>
-              <td>&euro; 110</td>
-              <td>&euro; 120</td>
-            </tr>
-            <tr>
-              <td>Type C: Standaardkamer met douche/toilet - tweepersoonsbed</td>
-              <td>&euro; 90</td>
-              <td>&euro; 100</td>
-            </tr>
-            <tr>
-              <td>Familiekamer (4 personen)</td>
-              <td>&euro; 200</td>
-              <td>&euro; 230</td>
-            </tr>
+            {rooms.map((room) => (
+              <tr>
+                <th scope="row">
+                  <a href={`/kamers/#${room.id}`}>{room.code !== room.name ? `${room.code}: ${room.name}` : room.name}</a>
+                  <span>{room.summary}</span>
+                </th>
+                <td data-label="Laagseizoen vanaf">&euro; {room.price.low}</td>
+                <td data-label="Hoogseizoen vanaf">&euro; {room.price.high}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
+        <p class="table-note">Prijzen per kamer per nacht, ontbijt inbegrepen.</p>
+      </div>
 
-        <h3>Extra bedden (niet mogelijk bij Type C)</h3>
-        <ul class="rates-children">
-          <li>Geen extra bed (0 - 2 jaar): gratis</li>
-          <li>Babybedje (0 - 2 jaar): &euro; 20</li>
-          <li>Kinderbed (3 - 12 jaar): &euro; 30</li>
-          <li>Eenpersoonsbed (vanaf 12 jaar): &euro; 40</li>
-        </ul>
-
-        <div class="rate-info">
-          <p><strong>Inbegrepen:</strong> ontbijt, TV, gratis WiFi en haardroger.</p>
-          <p><strong>Extra bij type A, B en familiekamer:</strong> minibar en waterkoker.</p>
-          <p><strong>Toeristenbelasting:</strong> &euro; 2,50 per persoon per nacht (niet inbegrepen).</p>
+      <div class="info-grid">
+        <div class="info card">
+          <span class="info-icon"><Baby size={22} /></span>
+          <h2>Extra bedden</h2>
+          <p class="muted">Niet mogelijk bij Type C</p>
+          <ul class="price-list">
+            {extraBeds.map((bed) => (
+              <li><span>{bed.label}</span> <strong>{bed.price}</strong></li>
+            ))}
+          </ul>
         </div>
-      </section>
+
+        <div class="info card">
+          <span class="info-icon"><Coffee size={22} /></span>
+          <h2>Inbegrepen</h2>
+          <ul class="check-list">
+            {includedInEveryRoom.map((item) => <li><Check size={17} /> {item}</li>)}
+          </ul>
+          <p class="muted extra"><strong>Extra bij type A, B en familiekamer:</strong> minibar en waterkoker.</p>
+        </div>
+
+        <div class="info card">
+          <span class="info-icon"><ReceiptEuro size={22} /></span>
+          <h2>Toeristenbelasting</h2>
+          <p>{touristTax}</p>
+        </div>
+      </div>
     </div>
-  </main>
+  </section>
+
+  <CtaBand />
 </Layout>
+
+<style>
+  .table-card {
+    overflow: hidden;
+  }
+
+  .rates-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .rates-table th,
+  .rates-table td {
+    padding: 1.25rem 1.75rem;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .rates-table thead th {
+    background-color: var(--color-primary);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .rates-table thead th span {
+    display: block;
+    color: rgb(255 255 255 / 0.75);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: none;
+  }
+
+  .rates-table tbody tr + tr {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .rates-table tbody th {
+    font-weight: 400;
+  }
+
+  .rates-table tbody th a {
+    display: block;
+    color: var(--color-heading);
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .rates-table tbody th a:hover {
+    color: var(--color-primary);
+  }
+
+  .rates-table tbody th span {
+    color: var(--color-muted);
+    font-size: 0.95rem;
+  }
+
+  .rates-table td {
+    color: var(--color-heading);
+    font-family: var(--font-serif);
+    font-variant-numeric: lining-nums;
+    font-size: 1.6rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .table-note {
+    padding: 1rem 1.75rem;
+    background-color: var(--color-sand);
+    color: var(--color-muted);
+    font-size: 0.92rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .info {
+    padding: 2rem;
+  }
+
+  .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 1.25rem;
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    border-radius: 999px;
+  }
+
+  .info h2 {
+    font-size: 1.6rem;
+  }
+
+  .muted {
+    color: var(--color-muted);
+  }
+
+  .info h2 + p,
+  .info h2 + ul {
+    margin-top: 0.5rem;
+  }
+
+  .price-list,
+  .check-list {
+    margin-top: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .price-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px dashed var(--color-line);
+  }
+
+  .price-list li:last-child {
+    border-bottom: 0;
+  }
+
+  .price-list strong {
+    white-space: nowrap;
+  }
+
+  .check-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-block: 0.25rem;
+  }
+
+  .check-list :global(svg) {
+    color: var(--color-primary);
+  }
+
+  .extra {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (max-width: 1000px) {
+    .info-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Gsm: tabel als kaartjes */
+  @media (max-width: 640px) {
+    .rates-table thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    .rates-table tbody tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding: 1.25rem;
+    }
+
+    .rates-table tbody th {
+      grid-column: 1 / -1;
+      padding: 0 0 1rem;
+    }
+
+    .rates-table td {
+      padding: 0;
+      font-size: 1.4rem;
+    }
+
+    .rates-table td::before {
+      content: attr(data-label);
+      display: block;
+      color: var(--color-muted);
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .table-note {
+      padding-inline: 1.25rem;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info {
+      padding: 1.5rem;
+    }
+  }
+</style>

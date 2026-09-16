@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import Phone from '@lucide/astro/icons/phone';
+import pier from '../assets/images/pier.jpg';
+import { bookingPath, hotel } from '../data/hotel';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const {
+  title = 'Klaar voor een verblijf aan zee?',
+  text = 'Vraag rechtstreeks uw verblijf aan. Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.',
+} = Astro.props;
+---
+
+<section class="cta">
+  <div class="container">
+    <div class="panel">
+      <div class="media">
+        <Image src={pier} alt="" width={1600} widths={[640, 1024, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" />
+      </div>
+      <div class="content">
+        <h2>{title}</h2>
+        <p>{text}</p>
+        <div class="btn-group">
+          <a href={bookingPath} class="btn btn-light">Vraag verblijf aan</a>
+          <a href={hotel.phone.href} class="btn btn-ghost-light"><Phone /> {hotel.phone.label}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Volgt altijd op een sectie die zelf al witruimte onderaan heeft */
+  .cta {
+    padding-bottom: var(--section-space);
+  }
+
+  .panel {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(2.5rem, 6vw, 4.5rem);
+    border-radius: var(--radius-lg);
+    color: #fff;
+  }
+
+  .media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgb(21 34 32 / 0.92) 0%, rgb(26 64 62 / 0.82) 55%, rgb(26 64 62 / 0.45) 100%);
+  }
+
+  .content {
+    position: relative;
+    max-width: 560px;
+  }
+
+  h2 {
+    color: #fff;
+  }
+
+  p {
+    margin-block: 1rem 2rem;
+    color: rgb(255 255 255 / 0.88);
+    font-size: 1.125rem;
+  }
+</style>
