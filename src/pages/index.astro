@@ -15,6 +15,7 @@ import monogram from '../assets/images/logo-bol.png';
 import happyTripBanner from '../assets/images/happytrip-banner.jpg';
 import { bookingPath, hotel } from '../data/hotel';
 import { rooms } from '../data/rooms';
+import { withBase } from '../utils/paths';
 
 const highlights = [
   { icon: WavesHorizontal, title: '400 m van het strand', text: 'Zee en zand op wandelafstand' },
@@ -92,7 +93,7 @@ const highlights = [
           <h2>Onze kamers</h2>
           <p>Comfortkamers, een standaardkamer en een familiekamer voor 4 personen. Het ontbijt is altijd inbegrepen.</p>
         </div>
-        <a href="/kamers/" class="link-arrow">Alle kamers bekijken <ArrowRight /></a>
+        <a href={withBase('/kamers/')} class="link-arrow">Alle kamers bekijken <ArrowRight /></a>
       </div>
       <div class="rooms-grid">
         {rooms.map((room) => <RoomCard room={room} variant="compact" />)}

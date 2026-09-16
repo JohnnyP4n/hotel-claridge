@@ -9,23 +9,35 @@ Vereist: Node.js 22.12 of nieuwer.
 | Commando          | Wat het doet                                             |
 | ----------------- | -------------------------------------------------------- |
 | `npm install`     | Installeert Astro (eenmalig, of na een `git pull`)       |
-| `npm run dev`     | Start de site lokaal op http://localhost:4321            |
+| `npm run dev`     | Start de site lokaal op http://localhost:4321/hotel-claridge/ |
 | `npm run build`   | Maakt de publiceerbare site aan in de map `dist/`        |
 | `npm run preview` | Toont de gebouwde site uit `dist/` om te controleren     |
 
-Om de site online te zetten, upload je de inhoud van `dist/` naar de hosting.
+## Online zetten
+
+De site staat op GitHub Pages: https://johnnyp4n.github.io/hotel-claridge/
+
+Bij elke push naar `main` bouwt GitHub Actions de site en zet ze online
+(zie `.github/workflows/deploy.yml`). In de repository moet
+**Settings → Pages → Source** op **GitHub Actions** staan.
+
+Omdat de site in de submap `/hotel-claridge` staat, gebruiken interne links
+`withBase()` uit `src/utils/paths.ts`, bv. `withBase('/kamers/')`.
 
 ## Structuur
 
 ```
+.github/workflows/   Automatisch bouwen en online zetten via GitHub Pages
 public/              Bestanden die ongewijzigd online komen (favicon)
 src/
   assets/images/     Foto's en logo's; Astro verkleint en comprimeert ze bij het bouwen
-  components/        Onderdelen die op elke pagina staan (Header, Footer)
+  components/        Onderdelen zoals menu, footer en kamerkaart
+  data/              Hotelgegevens, kamers en prijzen (op één plek aanpassen)
   layouts/           Paginasjabloon met <head>, menu en footer
   pages/             Eén bestand per pagina; de bestandsnaam wordt de URL
   scripts/           JavaScript voor de pagina's
   styles/            Stylesheet voor de hele site
+  utils/             Hulpfuncties, zoals withBase() voor interne links
 astro.config.mjs     Astro-instellingen
 ```
 

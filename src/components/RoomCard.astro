@@ -6,8 +6,10 @@ import BedDouble from '@lucide/astro/icons/bed-double';
 import Check from '@lucide/astro/icons/check';
 import Info from '@lucide/astro/icons/info';
 import Users from '@lucide/astro/icons/users';
+import TwinBedsIcon from './TwinBedsIcon.astro';
 import { bookingPath } from '../data/hotel';
 import type { Room } from '../data/rooms';
+import { withBase } from '../utils/paths';
 
 interface Props {
   room: Room;
@@ -32,7 +34,7 @@ const bookingHref = `${bookingPath}?kamer=${encodeURIComponent(room.code)}`;
 
   <div class="body">
     <h3>
-      {isFull ? room.name : <a href={`/kamers/#${room.id}`} class="stretched">{room.name}</a>}
+      {isFull ? room.name : <a href={withBase(`/kamers/#${room.id}`)} class="stretched">{room.name}</a>}
     </h3>
 
     {isFull && (
@@ -40,7 +42,7 @@ const bookingHref = `${bookingPath}?kamer=${encodeURIComponent(room.code)}`;
         <p class="summary">{room.summary}</p>
         <ul class="facts">
           <li><Users size={18} /> {room.guests}</li>
-          {room.bed && <li><BedDouble size={18} /> {room.bed}</li>}
+          {room.bed && <li>{room.twinBeds ? <TwinBedsIcon size={18} /> : <BedDouble size={18} />} {room.bed}</li>}
           {room.bathroom && <li><Bath size={18} /> {room.bathroom}</li>}
         </ul>
         {room.extras.length > 0 && (

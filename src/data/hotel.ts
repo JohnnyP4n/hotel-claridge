@@ -1,11 +1,19 @@
+import { withBase } from '../utils/paths';
+
+const address = {
+  street: 'de Limburg Stirumstraat 2',
+  postalCode: '8370',
+  city: 'Blankenberge',
+};
+
 // Gegevens van het hotel die op meerdere pagina's terugkomen (footer, contact, boeking)
 export const hotel = {
   name: 'Hotel Claridge',
-  address: {
-    street: 'de Limburg Stirumstraat 2',
-    postalCode: '8370',
-    city: 'Blankenberge',
-  },
+  address,
+  // Opent Google Maps (op een gsm de Maps-app) met het hotel als zoekresultaat
+  mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `Hotel Claridge, ${address.street}, ${address.postalCode} ${address.city}`,
+  )}`,
   // Enkel het gsm-nummer wordt gebruikt (geen vast nummer meer)
   mobile: { label: '+32 476 68 88 88', href: 'tel:+32476688888' },
   emails: ['info@hotel-claridge.be', 'hotelclaridge@msn.com'],
@@ -15,10 +23,10 @@ export const hotel = {
 };
 
 export const mainNav = [
-  { href: '/', label: 'Home' },
-  { href: '/kamers/', label: 'Kamers' },
-  { href: '/tarieven/', label: 'Tarieven' },
-  { href: '/contact/', label: 'Contact' },
+  { href: withBase('/'), label: 'Home' },
+  { href: withBase('/kamers/'), label: 'Kamers' },
+  { href: withBase('/tarieven/'), label: 'Tarieven' },
+  { href: withBase('/contact/'), label: 'Contact' },
 ];
 
-export const bookingPath = '/boeking/';
+export const bookingPath = withBase('/boeking/');

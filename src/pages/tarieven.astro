@@ -2,12 +2,14 @@
 import Baby from '@lucide/astro/icons/baby';
 import Check from '@lucide/astro/icons/check';
 import Coffee from '@lucide/astro/icons/coffee';
+import Info from '@lucide/astro/icons/info';
 import ReceiptEuro from '@lucide/astro/icons/receipt-euro';
 import CtaBand from '../components/CtaBand.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Layout from '../layouts/Layout.astro';
 import headerImage from '../assets/images/familiekamer.jpeg';
 import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms';
+import { withBase } from '../utils/paths';
 ---
 
 <Layout
@@ -37,7 +39,7 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
             {rooms.map((room) => (
               <tr>
                 <th scope="row">
-                  <a href={`/kamers/#${room.id}`}>{room.code !== room.name ? `${room.code}: ${room.name}` : room.name}</a>
+                  <a href={withBase(`/kamers/#${room.id}`)}>{room.code !== room.name ? `${room.code}: ${room.name}` : room.name}</a>
                   <span>{room.summary}</span>
                 </th>
                 <td data-label="Laagseizoen vanaf">&euro; {room.price.low}</td>
@@ -46,7 +48,10 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
             ))}
           </tbody>
         </table>
-        <p class="table-note">Prijzen per kamer per nacht, ontbijt inbegrepen.</p>
+        <p class="table-note">
+          <Info size={18} />
+          <span>Prijzen per kamer per nacht, ontbijt inbegrepen. De prijzen kunnen variëren afhankelijk van de periode.</span>
+        </p>
       </div>
 
       <div class="info-grid">
@@ -157,10 +162,19 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
   }
 
   .table-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
     padding: 1rem 1.75rem;
     background-color: var(--color-sand);
-    color: var(--color-muted);
-    font-size: 0.92rem;
+    color: var(--color-text);
+    font-size: 0.95rem;
+  }
+
+  .table-note :global(svg) {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+    color: var(--color-primary);
   }
 
   .info-grid {

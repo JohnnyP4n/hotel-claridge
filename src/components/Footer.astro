@@ -6,6 +6,7 @@ import MapPin from '@lucide/astro/icons/map-pin';
 import Smartphone from '@lucide/astro/icons/smartphone';
 import logo from '../assets/images/logo-transparant.png';
 import { bookingPath, hotel, mainNav } from '../data/hotel';
+import { withBase } from '../utils/paths';
 
 const year = new Date().getFullYear();
 ---
@@ -13,7 +14,7 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="container columns">
     <div class="about">
-      <a href="/" class="brand">
+      <a href={withBase('/')} class="brand">
         <Image src={logo} alt="Hotel Claridge" width={150} densities={[1, 2]} />
       </a>
       <p>Charmant hotel in het hart van Blankenberge, op slechts 400 meter van het strand.</p>
@@ -24,7 +25,10 @@ const year = new Date().getFullYear();
       <ul class="contact-list">
         <li>
           <MapPin size={18} />
-          <span>{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}</span>
+          <a href={hotel.mapsUrl} target="_blank" rel="noopener">
+            {hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}
+            <span class="sr-only">(opent in Google Maps)</span>
+          </a>
         </li>
         <li>
           <Smartphone size={18} />

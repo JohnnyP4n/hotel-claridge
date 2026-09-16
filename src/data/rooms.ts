@@ -13,6 +13,8 @@ export interface Room {
   summary: string;
   guests: string;
   bed?: string;
+  /** Toont het icoon met twee bedden in plaats van één tweepersoonsbed */
+  twinBeds?: boolean;
   bathroom?: string;
   /** Voorzieningen bovenop wat bij elke kamer inbegrepen is */
   extras: string[];
@@ -46,6 +48,7 @@ export const rooms: Room[] = [
     summary: 'Comfortkamer met douche/toilet en twee aparte bedden.',
     guests: '2 personen, extra bed mogelijk',
     bed: 'Twee aparte bedden',
+    twinBeds: true,
     bathroom: 'Douche en toilet',
     extras: ['Minibar / frigo', 'Waterkoker'],
     price: { low: 110, high: 120 },

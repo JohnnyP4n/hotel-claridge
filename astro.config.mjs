@@ -3,6 +3,12 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
+  // De site staat op GitHub Pages onder https://johnnyp4n.github.io/hotel-claridge/.
+  // Interne links gebruiken daarom withBase() uit src/utils/paths.ts.
+  // Bij een eigen domein (bv. hotel-claridge.be): site aanpassen en base verwijderen.
+  site: 'https://johnnyp4n.github.io',
+  base: '/hotel-claridge',
+
   // Spaties behandelen zoals in gewone HTML. De standaardinstelling ('jsx') laat een
   // spatie wegvallen als een regel eindigt vlak voor een tag, bv. "dagelijks\n<strong>".
   compressHTML: true,

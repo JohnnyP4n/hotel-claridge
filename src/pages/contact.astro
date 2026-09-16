@@ -29,7 +29,10 @@ import { hotel } from '../data/hotel';
             <span class="icon"><MapPin size={20} /></span>
             <div>
               <strong>Adres</strong>
-              <span>{hotel.name}<br />{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}</span>
+              <a href={hotel.mapsUrl} target="_blank" rel="noopener">
+                {hotel.name}<br />{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}
+                <span class="sr-only">(opent in Google Maps)</span>
+              </a>
             </div>
           </li>
           <li>
