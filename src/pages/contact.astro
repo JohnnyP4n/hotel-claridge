@@ -1,7 +1,6 @@
 ---
 import Mail from '@lucide/astro/icons/mail';
 import MapPin from '@lucide/astro/icons/map-pin';
-import Phone from '@lucide/astro/icons/phone';
 import Smartphone from '@lucide/astro/icons/smartphone';
 import TrainFront from '@lucide/astro/icons/train-front';
 import PageHeader from '../components/PageHeader.astro';
@@ -12,7 +11,7 @@ import { hotel } from '../data/hotel';
 
 <Layout
   title="Contact"
-  description="Contacteer Hotel Claridge, de Limburg Stirumstraat 2, 8370 Blankenberge. Bel +32 50 42 66 88 of stuur ons een e-mail."
+  description="Contacteer Hotel Claridge, de Limburg Stirumstraat 2, 8370 Blankenberge. Bel +32 476 68 88 88 of stuur ons een e-mail."
 >
   <PageHeader
     eyebrow="Contact"
@@ -31,13 +30,6 @@ import { hotel } from '../data/hotel';
             <div>
               <strong>Adres</strong>
               <span>{hotel.name}<br />{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}</span>
-            </div>
-          </li>
-          <li>
-            <span class="icon"><Phone size={20} /></span>
-            <div>
-              <strong>Telefoon</strong>
-              <a href={hotel.phone.href}>{hotel.phone.label}</a>
             </div>
           </li>
           <li>

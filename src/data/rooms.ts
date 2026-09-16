@@ -34,7 +34,7 @@ export const rooms: Room[] = [
     guests: '2 personen, extra bed mogelijk',
     bed: 'Tweepersoonsbed',
     bathroom: 'Bad en toilet',
-    extras: ['Minibar', 'Waterkoker'],
+    extras: ['Minibar / frigo', 'Waterkoker'],
     price: { low: 110, high: 120 },
     image: roomBath,
     imageAlt: 'Comfortkamer met bad',
@@ -47,7 +47,7 @@ export const rooms: Room[] = [
     guests: '2 personen, extra bed mogelijk',
     bed: 'Twee aparte bedden',
     bathroom: 'Douche en toilet',
-    extras: ['Minibar', 'Waterkoker'],
+    extras: ['Minibar / frigo', 'Waterkoker'],
     price: { low: 110, high: 120 },
     image: roomTwin,
     imageAlt: 'Comfortkamer met douche en twee aparte bedden',
@@ -72,20 +72,19 @@ export const rooms: Room[] = [
     name: 'Familiekamer',
     summary: 'Ruimte voor 4 personen, met extra comfort.',
     guests: '4 personen',
-    extras: ['Minibar', 'Waterkoker'],
+    extras: ['Minibar / frigo', 'Waterkoker'],
     price: { low: 200, high: 230 },
     image: roomFamily,
     imageAlt: 'Familiekamer',
   },
 ];
 
-export const extraBeds = [
-  { label: 'Geen extra bed (0 - 2 jaar)', price: 'gratis' },
-  { label: 'Babybedje (0 - 2 jaar)', price: '€ 20' },
-  { label: 'Kinderbed (3 - 12 jaar)', price: '€ 30' },
-  { label: 'Eenpersoonsbed (vanaf 12 jaar)', price: '€ 40' },
+// Prijs per nacht in euro; null = gratis
+export const extraBeds: { label: string; price: number | null }[] = [
+  { label: 'Geen extra bed (0 - 2 jaar)', price: null },
+  { label: 'Babybedje (0 - 2 jaar)', price: 20 },
+  { label: 'Kinderbed (3 - 12 jaar)', price: 30 },
+  { label: 'Eenpersoonsbed (vanaf 12 jaar)', price: 40 },
 ];
 
 export const touristTax = '€ 2,50 per persoon per nacht (niet inbegrepen)';
-
-export const lowestPrice = Math.min(...rooms.map((room) => room.price.low));

@@ -6,7 +6,7 @@ export const hotel = {
     postalCode: '8370',
     city: 'Blankenberge',
   },
-  phone: { label: '+32 50 42 66 88', href: 'tel:+3250426688' },
+  // Enkel het gsm-nummer wordt gebruikt (geen vast nummer meer)
   mobile: { label: '+32 476 68 88 88', href: 'tel:+32476688888' },
   emails: ['info@hotel-claridge.be', 'hotelclaridge@msn.com'],
   bookingUrl: 'https://www.booking.com/hotel/be/claridge.nl.html',

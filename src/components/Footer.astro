@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import ExternalLink from '@lucide/astro/icons/external-link';
 import Mail from '@lucide/astro/icons/mail';
 import MapPin from '@lucide/astro/icons/map-pin';
-import Phone from '@lucide/astro/icons/phone';
 import Smartphone from '@lucide/astro/icons/smartphone';
 import logo from '../assets/images/logo-transparant.png';
 import { bookingPath, hotel, mainNav } from '../data/hotel';
@@ -17,7 +16,7 @@ const year = new Date().getFullYear();
       <a href="/" class="brand">
         <Image src={logo} alt="Hotel Claridge" width={150} densities={[1, 2]} />
       </a>
-      <p>Charmant hotel in het hart van Blankenberge, op slechts 200 meter van het strand.</p>
+      <p>Charmant hotel in het hart van Blankenberge, op slechts 400 meter van het strand.</p>
     </div>
 
     <div>
@@ -26,10 +25,6 @@ const year = new Date().getFullYear();
         <li>
           <MapPin size={18} />
           <span>{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}</span>
-        </li>
-        <li>
-          <Phone size={18} />
-          <a href={hotel.phone.href}>{hotel.phone.label}</a>
         </li>
         <li>
           <Smartphone size={18} />

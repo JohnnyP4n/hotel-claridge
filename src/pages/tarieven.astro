@@ -56,7 +56,12 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
           <p class="muted">Niet mogelijk bij Type C</p>
           <ul class="price-list">
             {extraBeds.map((bed) => (
-              <li><span>{bed.label}</span> <strong>{bed.price}</strong></li>
+              <li>
+                <span>{bed.label}</span>
+                {bed.price === null
+                  ? <strong>gratis</strong>
+                  : <span class="bed-price"><strong>&euro; {bed.price}</strong> <small>per nacht</small></span>}
+              </li>
             ))}
           </ul>
         </div>
@@ -67,7 +72,7 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
           <ul class="check-list">
             {includedInEveryRoom.map((item) => <li><Check size={17} /> {item}</li>)}
           </ul>
-          <p class="muted extra"><strong>Extra bij type A, B en familiekamer:</strong> minibar en waterkoker.</p>
+          <p class="muted extra"><strong>Extra bij type A, B en familiekamer:</strong> minibar / frigo en waterkoker.</p>
         </div>
 
         <div class="info card">
@@ -203,6 +208,7 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
 
   .price-list li {
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
     padding-block: 0.6rem;
@@ -215,6 +221,18 @@ import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms
 
   .price-list strong {
     white-space: nowrap;
+  }
+
+  .bed-price {
+    display: grid;
+    flex-shrink: 0;
+    justify-items: end;
+    line-height: 1.3;
+  }
+
+  .bed-price small {
+    color: var(--color-muted);
+    font-size: 0.8rem;
   }
 
   .check-list li {
