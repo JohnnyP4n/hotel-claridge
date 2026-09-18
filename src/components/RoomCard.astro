@@ -42,7 +42,14 @@ const bookingHref = `${bookingPath}?kamer=${encodeURIComponent(room.code)}`;
         <p class="summary">{room.summary}</p>
         <ul class="facts">
           <li><Users size={18} /> {room.guests}</li>
-          {room.bed && <li>{room.twinBeds ? <TwinBedsIcon size={18} /> : <BedDouble size={18} />} {room.bed}</li>}
+          {room.bed && (
+            <li>
+              <span class="icons">
+                {(room.bedIcons ?? ['double']).map((icon) => icon === 'twin' ? <TwinBedsIcon size={18} /> : <BedDouble size={18} />)}
+              </span>
+              {room.bed}
+            </li>
+          )}
           {room.bathroom && <li><Bath size={18} /> {room.bathroom}</li>}
         </ul>
         {room.extras.length > 0 && (
@@ -163,6 +170,12 @@ const bookingHref = `${bookingPath}?kamer=${encodeURIComponent(room.code)}`;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .icons {
+    display: inline-flex;
+    flex-shrink: 0;
+    gap: 0.25rem;
   }
 
   .facts :global(svg) {

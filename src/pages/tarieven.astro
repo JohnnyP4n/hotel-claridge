@@ -2,12 +2,14 @@
 import Baby from '@lucide/astro/icons/baby';
 import Check from '@lucide/astro/icons/check';
 import Coffee from '@lucide/astro/icons/coffee';
+import Gift from '@lucide/astro/icons/gift';
 import Info from '@lucide/astro/icons/info';
 import ReceiptEuro from '@lucide/astro/icons/receipt-euro';
 import CtaBand from '../components/CtaBand.astro';
 import PageHeader from '../components/PageHeader.astro';
 import Layout from '../layouts/Layout.astro';
 import headerImage from '../assets/images/familiekamer.jpeg';
+import { bookingPath } from '../data/hotel';
 import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms';
 import { withBase } from '../utils/paths';
 ---
@@ -52,6 +54,16 @@ import { withBase } from '../utils/paths';
           <Info size={18} />
           <span>Prijzen per kamer per nacht, ontbijt inbegrepen. De prijzen kunnen variëren afhankelijk van de periode.</span>
         </p>
+      </div>
+
+      <div class="promo card">
+        <span class="promo-icon"><Gift size={26} /></span>
+        <div class="promo-text">
+          <p class="promo-eyebrow">Laagseizoen</p>
+          <h2>3 + 1 nacht gratis</h2>
+          <p>Boekt u rechtstreeks bij ons in het laagseizoen? Dan betaalt u 3 nachten en is de 4de nacht gratis. Geldig op gewone dagen, niet tijdens drukke periodes.</p>
+        </div>
+        <a href={bookingPath} class="btn btn-primary">Vraag verblijf aan</a>
       </div>
 
       <div class="info-grid">
@@ -175,6 +187,52 @@ import { withBase } from '../utils/paths';
     flex-shrink: 0;
     margin-top: 0.2rem;
     color: var(--color-primary);
+  }
+
+  .promo {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1.75rem 2rem;
+    background-color: var(--color-primary-soft);
+    border-left: 4px solid var(--color-primary);
+  }
+
+  .promo-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background-color: var(--color-primary);
+    color: #fff;
+    border-radius: 999px;
+  }
+
+  .promo-text {
+    flex: 1;
+  }
+
+  .promo-eyebrow {
+    color: var(--color-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .promo h2 {
+    font-size: 1.6rem;
+  }
+
+  .promo h2 + p {
+    margin-top: 0.35rem;
+  }
+
+  .promo .btn {
+    flex-shrink: 0;
   }
 
   .info-grid {
@@ -311,6 +369,12 @@ import { withBase } from '../utils/paths';
 
     .table-note {
       padding-inline: 1.25rem;
+    }
+
+    .promo {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.5rem;
     }
 
     .info-grid {

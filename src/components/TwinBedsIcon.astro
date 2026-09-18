@@ -1,6 +1,8 @@
 ---
 // Twee aparte bedden, getekend in dezelfde stijl als de Lucide-iconen
 // (Lucide heeft zelf enkel een icoon voor één bed).
+// Zelfde hoogtes als Lucide's bed-double; elk bed is ongeveer 60% zo breed,
+// daarom is het icoon breder dan hoog.
 interface Props {
   size?: number;
 }
@@ -10,9 +12,9 @@ const { size = 24 } = Astro.props;
 
 <svg
   xmlns="http://www.w3.org/2000/svg"
-  width={size}
+  width={(size * 32) / 24}
   height={size}
-  viewBox="0 0 24 24"
+  viewBox="0 0 32 24"
   fill="none"
   stroke="currentColor"
   stroke-width="2"
@@ -20,10 +22,10 @@ const { size = 24 } = Astro.props;
   stroke-linejoin="round"
   aria-hidden="true"
 >
-  <path d="M1 19v-7a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v7" />
-  <path d="M2.5 10V7.5A1.5 1.5 0 0 1 4 6h3a1.5 1.5 0 0 1 1.5 1.5V10" />
-  <path d="M1 17h9" />
-  <path d="M14 19v-7a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v7" />
-  <path d="M15.5 10V7.5A1.5 1.5 0 0 1 17 6h3a1.5 1.5 0 0 1 1.5 1.5V10" />
-  <path d="M14 17h9" />
+  <path d="M2 20v-8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8" />
+  <path d="M4 10V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4" />
+  <path d="M2 18h12" />
+  <path d="M18 20v-8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8" />
+  <path d="M20 10V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4" />
+  <path d="M18 18h12" />
 </svg>

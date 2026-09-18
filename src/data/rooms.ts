@@ -13,8 +13,8 @@ export interface Room {
   summary: string;
   guests: string;
   bed?: string;
-  /** Toont het icoon met twee bedden in plaats van één tweepersoonsbed */
-  twinBeds?: boolean;
+  /** Iconen vóór de bedtekst; standaard één tweepersoonsbed */
+  bedIcons?: ('double' | 'twin')[];
   bathroom?: string;
   /** Voorzieningen bovenop wat bij elke kamer inbegrepen is */
   extras: string[];
@@ -48,7 +48,7 @@ export const rooms: Room[] = [
     summary: 'Comfortkamer met douche/toilet en twee aparte bedden.',
     guests: '2 personen, extra bed mogelijk',
     bed: 'Twee aparte bedden',
-    twinBeds: true,
+    bedIcons: ['twin'],
     bathroom: 'Douche en toilet',
     extras: ['Minibar / frigo', 'Waterkoker'],
     price: { low: 110, high: 120 },
@@ -60,7 +60,7 @@ export const rooms: Room[] = [
     code: 'Type C',
     name: 'Standaardkamer',
     summary: 'Kleine kamer met douche/toilet en een tweepersoonsbed.',
-    guests: '2 personen',
+    guests: 'Max. 2 personen',
     bed: 'Tweepersoonsbed',
     bathroom: 'Douche en toilet',
     extras: [],
@@ -74,7 +74,10 @@ export const rooms: Room[] = [
     code: 'Familiekamer',
     name: 'Familiekamer',
     summary: 'Ruimte voor 4 personen, met extra comfort.',
-    guests: '4 personen',
+    guests: '4 personen, extra bedden mogelijk',
+    bed: 'Tweepersoonsbed en twee aparte bedden',
+    bedIcons: ['double', 'twin'],
+    bathroom: 'Bad en toilet',
     extras: ['Minibar / frigo', 'Waterkoker'],
     price: { low: 200, high: 230 },
     image: roomFamily,
