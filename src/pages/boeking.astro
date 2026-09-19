@@ -11,11 +11,13 @@ import headerImage from '../assets/images/strand.jpg';
 import { hotel } from '../data/hotel';
 import { rooms } from '../data/rooms';
 
-// Het eigen script bij Cloudflare (map worker/) mailt de aanvraag naar het hotel.
-// Tijdens npm run dev gaat de aanvraag naar de lokale testversie (cd worker && npm run dev).
-const formEndpoint = import.meta.env.DEV
-  ? 'http://localhost:8787'
-  : 'https://hotel-claridge-aanvraag.hotelclaridge.workers.dev';
+// Het eigen script bij Cloudflare (map worker/) mailt de aanvraag naar het hotel en een
+// bevestiging naar de gast. Ook lokaal (npm run dev): elke test verstuurt dus echte mails.
+const formEndpoint = 'https://hotel-claridge-aanvraag.hotelclaridge.workers.dev';
+
+// Cloudflare Turnstile houdt spambots tegen. De sitekey is openbaar; de geheime sleutel staat
+// bij het script. De widget laat johnnyp4n.github.io en localhost toe.
+const turnstileSiteKey = '0x4AAAAAAE86cn95It_fBqiX';
 ---
 
 <Layout
@@ -87,6 +89,11 @@ const formEndpoint = import.meta.env.DEV
         </fieldset>
 
         <div class="submit">
+          <!-- Spamcontrole van Cloudflare: meestal meteen "gelukt", soms vraagt ze een klik -->
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-language="nl" data-size="flexible"></div>
+          <p id="booking-check" class="form-error" role="alert" hidden>
+            Vink eerst het vakje "Ik ben geen robot" hierboven aan.
+          </p>
           <p id="booking-error" class="form-error" role="alert" hidden>
             Het versturen is niet gelukt. Probeer het opnieuw of bel ons op
             <a href={hotel.mobile.href}>{hotel.mobile.label}</a>.
@@ -102,6 +109,7 @@ const formEndpoint = import.meta.env.DEV
           Wij hebben uw aanvraag goed ontvangen. We controleren de beschikbaarheid en nemen zo snel
           mogelijk contact met u op via e-mail of telefoon.
         </p>
+        <p>U ontvangt ook een bevestiging van uw aanvraag per e-mail.</p>
       </div>
 
       <aside class="aside">
@@ -135,6 +143,7 @@ const formEndpoint = import.meta.env.DEV
   </section>
 </Layout>
 
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
   import '../scripts/boeking.js';
 </script>

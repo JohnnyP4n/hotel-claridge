@@ -11,12 +11,17 @@
     // Naar dit adres gaan de aanvragen
     "MAIL_TO": "hotelclaridge@msn.com",
 
+    // Antwoordt de gast op de bevestiging, dan komt het antwoord hier terecht
+    "REPLY_TO": "info@hotel-claridge.be",
+
     // Mailbox bij Combell waarmee de mail verstuurd wordt (ook de afzender). Moet een echte
     // mailbox zijn, geen doorverwijzing: info@ is enkel een doorverwijzing en kan niet inloggen.
     // Het wachtwoord staat NIET hier, maar als geheim bij Cloudflare: npx wrangler secret put SMTP_PASSWORD
     "SMTP_USER": "website@hotel-claridge.be",
     "SMTP_HOST": "smtp-auth.mailprotect.be",
     "SMTP_PORT": "465",
+
+    // De geheime Turnstile-sleutel staat ook als geheim bij Cloudflare: npx wrangler secret put TURNSTILE_SECRET
 
     // Sites die het formulier mogen versturen (komma-gescheiden)
     "ALLOWED_ORIGINS": "https://johnnyp4n.github.io,http://localhost:4321"

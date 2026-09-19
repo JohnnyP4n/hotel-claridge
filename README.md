@@ -27,8 +27,11 @@ Omdat de site in de submap `/hotel-claridge` staat, gebruiken interne links
 ## Aanvraagformulier
 
 Het formulier op `/boeking/` gaat naar een eigen script bij Cloudflare Workers (map
-`worker/`, gratis). Dat mailt de aanvraag via de mailbox bij Combell naar het hotel. Met
-"Beantwoorden" schrijf je de gast meteen terug. Uitleg en installatie: `worker/README.md`.
+`worker/`, gratis). Dat mailt de aanvraag via de mailbox bij Combell naar het hotel en stuurt
+de gast een bevestiging. Cloudflare Turnstile houdt spambots tegen. Met "Beantwoorden" schrijf
+je de gast meteen terug. Uitleg en installatie: `worker/README.md`.
+
+Ook lokaal (`npm run dev`) verstuurt het formulier echte mails.
 
 ## Structuur
 
