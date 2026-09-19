@@ -9,7 +9,13 @@ eigen mailbox bij Combell. Het draait gratis op Cloudflare Workers (100.000 aanv
 
 ## Eerste keer online zetten
 
-In deze map (`cd worker`):
+Vooraf bij Combell (E-mail hosting → hotel-claridge.be):
+
+- een **mailbox** `website@hotel-claridge.be` (een doorverwijzing zoals `info@` kan niet inloggen);
+- bij DNS een SPF-record (TXT, hostnaam leeg): `v=spf1 include:_spf.relay.mailprotect.be -all`,
+  zodat de mails niet als spam aankomen.
+
+Daarna in deze map (`cd worker`):
 
 ```bash
 npm install

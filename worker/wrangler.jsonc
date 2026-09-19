@@ -11,9 +11,10 @@
     // Naar dit adres gaan de aanvragen
     "MAIL_TO": "hotelclaridge@msn.com",
 
-    // Mailbox bij Combell waarmee de mail verstuurd wordt (ook de afzender).
+    // Mailbox bij Combell waarmee de mail verstuurd wordt (ook de afzender). Moet een echte
+    // mailbox zijn, geen doorverwijzing: info@ is enkel een doorverwijzing en kan niet inloggen.
     // Het wachtwoord staat NIET hier, maar als geheim bij Cloudflare: npx wrangler secret put SMTP_PASSWORD
-    "SMTP_USER": "info@hotel-claridge.be",
+    "SMTP_USER": "website@hotel-claridge.be",
     "SMTP_HOST": "smtp-auth.mailprotect.be",
     "SMTP_PORT": "465",
 
