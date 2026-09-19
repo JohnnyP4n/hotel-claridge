@@ -24,6 +24,12 @@ Bij elke push naar `main` bouwt GitHub Actions de site en zet ze online
 Omdat de site in de submap `/hotel-claridge` staat, gebruiken interne links
 `withBase()` uit `src/utils/paths.ts`, bv. `withBase('/kamers/')`.
 
+## Aanvraagformulier
+
+Het formulier op `/boeking/` gaat naar een eigen script bij Cloudflare Workers (map
+`worker/`, gratis). Dat mailt de aanvraag via de mailbox bij Combell naar het hotel. Met
+"Beantwoorden" schrijf je de gast meteen terug. Uitleg en installatie: `worker/README.md`.
+
 ## Structuur
 
 ```
@@ -38,6 +44,7 @@ src/
   scripts/           JavaScript voor de pagina's
   styles/            Stylesheet voor de hele site
   utils/             Hulpfuncties, zoals withBase() voor interne links
+worker/              Script bij Cloudflare dat het aanvraagformulier mailt
 astro.config.mjs     Astro-instellingen
 ```
 
@@ -52,5 +59,4 @@ astro.config.mjs     Astro-instellingen
 
 ## Uitbreiding
 
-- reserveringsformulier verzending via email
 - eigen boekingssysteem

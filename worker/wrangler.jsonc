@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "hotel-claridge-aanvraag",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+
+  // Foutmeldingen bekijken in Cloudflare: Workers & Pages > hotel-claridge-aanvraag > Logs
+  "observability": { "enabled": true },
+
+  "vars": {
+    // Naar dit adres gaan de aanvragen
+    "MAIL_TO": "hotelclaridge@msn.com",
+
+    // Mailbox bij Combell waarmee de mail verstuurd wordt (ook de afzender).
+    // Het wachtwoord staat NIET hier, maar als geheim bij Cloudflare: npx wrangler secret put SMTP_PASSWORD
+    "SMTP_USER": "info@hotel-claridge.be",
+    "SMTP_HOST": "smtp-auth.mailprotect.be",
+    "SMTP_PORT": "465",
+
+    // Sites die het formulier mogen versturen (komma-gescheiden)
+    "ALLOWED_ORIGINS": "https://johnnyp4n.github.io,http://localhost:4321"
+  }
+}

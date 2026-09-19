@@ -1,5 +1,6 @@
 ---
 import CalendarCheck from '@lucide/astro/icons/calendar-check';
+import CircleCheck from '@lucide/astro/icons/circle-check';
 import Coffee from '@lucide/astro/icons/coffee';
 import ExternalLink from '@lucide/astro/icons/external-link';
 import Phone from '@lucide/astro/icons/phone';
@@ -9,6 +10,12 @@ import Layout from '../layouts/Layout.astro';
 import headerImage from '../assets/images/strand.jpg';
 import { hotel } from '../data/hotel';
 import { rooms } from '../data/rooms';
+
+// Het eigen script bij Cloudflare (map worker/) mailt de aanvraag naar het hotel.
+// Tijdens npm run dev gaat de aanvraag naar de lokale testversie (cd worker && npm run dev).
+const formEndpoint = import.meta.env.DEV
+  ? 'http://localhost:8787'
+  : 'https://hotel-claridge-aanvraag.SUBDOMEIN.workers.dev';
 ---
 
 <Layout
@@ -25,8 +32,10 @@ import { rooms } from '../data/rooms';
 
   <section class="section" id="booking">
     <div class="container booking-grid">
-      <form id="booking-form" class="card" action="https://api.web3forms.com/submit" method="POST">
-        <input type="hidden" name="access_key" value="15a448c6-8d0b-4075-8d79-1e58ddbfc27b" />
+      <!-- src/scripts/boeking.js verstuurt het formulier zonder de pagina te verlaten -->
+      <form id="booking-form" class="card" action={formEndpoint} method="POST">
+        <!-- Spamval: onzichtbaar voor bezoekers, spambots vinken dit aan -->
+        <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
         <fieldset>
           <legend>Jouw gegevens</legend>
@@ -77,8 +86,23 @@ import { rooms } from '../data/rooms';
           </div>
         </fieldset>
 
-        <button type="submit" class="btn btn-primary">Vraag verblijf aan</button>
+        <div class="submit">
+          <p id="booking-error" class="form-error" role="alert" hidden>
+            Het versturen is niet gelukt. Probeer het opnieuw of bel ons op
+            <a href={hotel.mobile.href}>{hotel.mobile.label}</a>.
+          </p>
+          <button type="submit" class="btn btn-primary">Vraag verblijf aan</button>
+        </div>
       </form>
+
+      <div id="booking-sent" class="card sent" tabindex="-1" hidden>
+        <CircleCheck size={40} />
+        <h2>Bedankt voor uw aanvraag</h2>
+        <p>
+          Wij hebben uw aanvraag goed ontvangen. We controleren de beschikbaarheid en nemen zo snel
+          mogelijk contact met u op via e-mail of telefoon.
+        </p>
+      </div>
 
       <aside class="aside">
         <div class="card aside-card">
@@ -144,9 +168,52 @@ import { rooms } from '../data/rooms';
     grid-column: 1 / -1;
   }
 
+  .botcheck {
+    display: none;
+  }
+
+  .submit {
+    display: grid;
+    gap: 1rem;
+  }
+
   #booking-form .btn {
     justify-self: start;
     min-width: 220px;
+  }
+
+  #booking-form .btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+  }
+
+  .form-error {
+    padding: 0.85rem 1rem;
+    background-color: var(--color-error-soft);
+    color: var(--color-error);
+    border-radius: var(--radius-sm);
+    font-size: 0.97rem;
+  }
+
+  .form-error a {
+    color: inherit;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .sent {
+    display: grid;
+    justify-items: start;
+    gap: 1rem;
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+  }
+
+  .sent:focus {
+    outline: none;
+  }
+
+  .sent :global(svg) {
+    color: var(--color-primary);
   }
 
   .aside {

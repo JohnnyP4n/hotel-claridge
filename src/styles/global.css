@@ -20,6 +20,8 @@
   --color-dark: #152220;
   --color-on-dark: #dfe7e5;
   --color-on-dark-muted: #a3b3b0;
+  --color-error: #9b2c22;
+  --color-error-soft: #f8e8e5;
 
   --radius-sm: 10px;
   --radius: 16px;
@@ -69,6 +71,11 @@ body {
 
 main {
   flex: 1;
+}
+
+/* Het hidden-attribuut moet ook verbergen als een class display: grid/flex zet */
+[hidden] {
+  display: none !important;
 }
 
 img,
