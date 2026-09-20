@@ -29,6 +29,12 @@ export const fr: Translation = {
     free: 'gratuit',
   },
 
+  /** Message en haut du site quand l’hôtel est fermé ; {van} et {tot} deviennent des dates */
+  notice: {
+    closed: 'Nous sommes fermés du {van} au {tot} inclus.',
+    closedOneDay: 'Nous sommes fermés le {van}.',
+  },
+
   footer: {
     tagline: 'Hôtel de charme au cœur de Blankenberge, à seulement 400 mètres de la plage.',
     contact: 'Contact',
@@ -172,7 +178,7 @@ export const fr: Translation = {
     },
     touristTax: {
       title: 'Taxe de séjour',
-      text: '2,50 € par personne et par nuit (non incluse)',
+      text: '{bedrag} € par personne et par nuit (non incluse)',
     },
   },
 

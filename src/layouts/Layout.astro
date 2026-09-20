@@ -2,6 +2,7 @@
 import { Font } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { workerUrl } from '../data/instellingen';
 import { defaultLocale, localeLinks, useTranslations, type Locale } from '../i18n';
 import { withBase } from '../utils/paths';
 import '../styles/global.css';
@@ -46,10 +47,30 @@ const defaultUrl = alternates.find((link) => link.locale === defaultLocale)?.url
 </head>
 <body>
   <a class="skip-link" href="#inhoud">{t.skipLink}</a>
+
+  <!-- Balk bovenaan elke pagina, bv. "Wij zijn gesloten van ... tot en met ...". Ze blijft
+       leeg en verborgen tot src/scripts/instellingen.js bij Cloudflare opgehaald heeft wat
+       het hotel via /admin/ instelde. De teksten staan hier als data-attributen, zodat het
+       script zelf geen vertalingen bevat (net als bij het aanvraagformulier). -->
+  <div
+    id="site-melding"
+    class="site-melding"
+    role="status"
+    hidden
+    data-url={`${workerUrl}/instellingen`}
+    data-locale={t.dateLocale}
+    data-gesloten={t.notice.closed}
+    data-gesloten-een-dag={t.notice.closedOneDay}
+  ></div>
+
   <Header locale={locale} />
   <main id="inhoud">
     <slot />
   </main>
   <Footer locale={locale} />
+
+  <script>
+    import '../scripts/instellingen.js';
+  </script>
 </body>
 </html>

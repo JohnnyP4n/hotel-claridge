@@ -1,0 +1,484 @@
+---
+// Beheerpagina van het hotel: hier worden de prijzen, de sluitingsmeldingen en de
+// 3 + 1 actie aangepast. Ze staat los van de gewone site (geen menu, geen taalkeuze, niet
+// in Google) en bewaart alles bij Cloudflare, in het script uit de map worker/.
+//
+// Adres: /admin/ — bv. https://johnnyp4n.github.io/hotel-claridge/admin/
+//
+// De waarden die hier bij het openen in het formulier staan, zijn die uit src/data/:
+// dezelfde waarmee de site gebouwd is. Daaroverheen komt wat er al bewaard werd.
+import { Font } from 'astro:assets';
+import { standaardInstellingen, workerUrl } from '../data/instellingen';
+import { extraBeds, rooms } from '../data/rooms';
+import { useTranslations } from '../i18n';
+import { withBase } from '../utils/paths';
+import '../styles/global.css';
+
+// De beheerpagina is enkel in het Nederlands
+const t = useTranslations('nl');
+const standaard = standaardInstellingen();
+
+const kamers = rooms.map((room) => ({
+  id: room.id,
+  naam: room.showCode ? `${room.code}: ${t.rooms.items[room.id].name}` : t.rooms.items[room.id].name,
+}));
+
+// Enkel de bedden met een prijs; het babybedje voor 0 - 2 jaar is gratis
+const bedden = extraBeds
+  .filter((bed) => bed.price !== null)
+  .map((bed) => ({ id: bed.id, naam: t.rates.extraBeds.items[bed.id] }));
+---
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beheer | Hotel Claridge</title>
+  <!-- Deze pagina hoort niet in Google thuis -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#245552" />
+  <link rel="icon" href={withBase('/favicon.ico')} type="image/x-icon" />
+  <Font cssVariable="--font-serif" preload />
+  <Font cssVariable="--font-sans" preload />
+</head>
+<body class="admin">
+  <!-- De standaardwaarden uit src/data/, waarmee src/scripts/admin.js het formulier vult
+       zolang er nog niets bewaard is (en waar de knop "Standaardprijzen terugzetten" op
+       terugvalt) -->
+  <script type="application/json" id="standaard-instellingen" set:html={JSON.stringify(standaard)} is:inline></script>
+
+  <header class="admin-kop">
+    <div class="admin-breedte">
+      <p class="admin-eyebrow">Hotel Claridge</p>
+      <h1>Beheer</h1>
+    </div>
+  </header>
+
+  <main class="admin-breedte" data-url={workerUrl}>
+    <!-- Aanmelden -->
+    <form id="aanmeldformulier" class="card admin-kaart admin-aanmelden">
+      <h2>Aanmelden</h2>
+      <div class="field">
+        <label for="wachtwoord">Wachtwoord</label>
+        <input type="password" id="wachtwoord" name="wachtwoord" autocomplete="current-password" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Aanmelden</button>
+      <p class="admin-fout" id="aanmeldfout" hidden></p>
+    </form>
+
+    <!-- Alles hieronder verschijnt pas na het aanmelden -->
+    <form id="beheerformulier" hidden>
+      <section class="card admin-kaart">
+        <h2>Kamerprijzen</h2>
+        <p class="admin-uitleg">Per kamer per nacht, ontbijt inbegrepen.</p>
+        <div class="admin-tabel">
+          <div class="admin-tabelkop">
+            <span>Kamer</span>
+            <span>Laagseizoen</span>
+            <span>Hoogseizoen</span>
+          </div>
+          {kamers.map((kamer) => (
+            <div class="admin-rij">
+              <span class="admin-naam">{kamer.naam}</span>
+              <label class="admin-bedrag">
+                {/* Op een gsm vallen de kolomtitels weg; dan staat het seizoen boven het veld */}
+                <span class="admin-seizoen" aria-hidden="true">{t.rates.lowSeason}</span>
+                <span aria-hidden="true">&euro;</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="5000"
+                  step="1"
+                  required
+                  aria-label={`${kamer.naam}, ${t.rates.lowSeason.toLowerCase()}`}
+                  data-prijs={`kamers.${kamer.id}.laag`}
+                />
+              </label>
+              <label class="admin-bedrag">
+                <span class="admin-seizoen" aria-hidden="true">{t.rates.highSeason}</span>
+                <span aria-hidden="true">&euro;</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="5000"
+                  step="1"
+                  required
+                  aria-label={`${kamer.naam}, ${t.rates.highSeason.toLowerCase()}`}
+                  data-prijs={`kamers.${kamer.id}.hoog`}
+                />
+              </label>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="card admin-kaart">
+        <h2>Extra bedden en belasting</h2>
+        <p class="admin-uitleg">Prijs per nacht. Het babybedje van 0 tot 2 jaar blijft gratis.</p>
+        <div class="admin-tabel">
+          {bedden.map((bed) => (
+            <div class="admin-rij twee">
+              <span class="admin-naam">{bed.naam}</span>
+              <label class="admin-bedrag">
+                <span aria-hidden="true">&euro;</span>
+                <input
+                  type="number"
+                  min="0"
+                  max="5000"
+                  step="1"
+                  required
+                  aria-label={bed.naam}
+                  data-prijs={`extraBedden.${bed.id}`}
+                />
+              </label>
+            </div>
+          ))}
+          <div class="admin-rij twee">
+            <span class="admin-naam">Toeristenbelasting <small>per persoon per nacht</small></span>
+            <label class="admin-bedrag">
+              <span aria-hidden="true">&euro;</span>
+              <input
+                type="number"
+                min="0"
+                max="5000"
+                step="0.01"
+                required
+                aria-label="Toeristenbelasting per persoon per nacht"
+                data-prijs="toeristenbelasting"
+              />
+            </label>
+          </div>
+        </div>
+        <button type="button" class="btn btn-outline admin-terugzetten" id="terugzetten">
+          Standaardprijzen terugzetten
+        </button>
+      </section>
+
+      <section class="card admin-kaart">
+        <h2>3 + 1 actie</h2>
+        <p class="admin-uitleg">
+          Het blok "{t.rates.promo.title}" onderaan de tarievenpagina, in alle talen.
+        </p>
+        <label class="admin-schakelaar">
+          <input type="checkbox" id="promo" />
+          <span>Actie tonen op de tarievenpagina</span>
+        </label>
+      </section>
+
+      <section class="card admin-kaart">
+        <h2>Gesloten periodes</h2>
+        <p class="admin-uitleg">
+          Bovenaan elke pagina verschijnt dan "Wij zijn gesloten van ... tot en met ...", in
+          de taal van de bezoeker. De melding verdwijnt vanzelf na de laatste dag.
+        </p>
+        <ul class="admin-periodes" id="periodes"></ul>
+        <p class="admin-leeg" id="geen-periodes">Nog geen periode ingesteld.</p>
+        <button type="button" class="btn btn-outline" id="periode-toevoegen">Periode toevoegen</button>
+      </section>
+
+      <div class="admin-opslaan">
+        <button type="submit" class="btn btn-primary" id="opslaan">Opslaan</button>
+        <button type="button" class="btn btn-outline" id="afmelden">Afmelden</button>
+        <p class="admin-status" id="status" role="status"></p>
+      </div>
+    </form>
+  </main>
+
+  <!-- Eén gesloten periode; src/scripts/admin.js maakt hier een kopie van per periode.
+       De invoervelden zitten in hun label, zodat een kopie geen dubbele id's krijgt. -->
+  <template id="periode-sjabloon">
+    <li class="admin-periode">
+      <label class="field">
+        <span>Van</span>
+        <input type="date" data-veld="van" required />
+      </label>
+      <label class="field">
+        <span>Tot en met</span>
+        <input type="date" data-veld="tot" required />
+      </label>
+      <label class="field admin-periode-tekst">
+        <span>Eigen tekst <small>(optioneel)</small></span>
+        <input type="text" data-veld="tekst" maxlength="200" placeholder="bv. Aanvragen blijven welkom" />
+      </label>
+      <label class="admin-schakelaar">
+        <input type="checkbox" data-veld="actief" />
+        <span>Tonen</span>
+      </label>
+      <button type="button" class="admin-verwijder" data-verwijder>Verwijderen</button>
+    </li>
+  </template>
+
+  <script>
+    import '../scripts/admin.js';
+  </script>
+</body>
+</html>
+
+<style is:global>
+  .admin {
+    background-color: var(--color-bg);
+  }
+
+  .admin-breedte {
+    width: min(100% - 2 * var(--gutter), 900px);
+    margin-inline: auto;
+  }
+
+  .admin-kop {
+    padding-block: 2.5rem 2rem;
+    margin-bottom: 2rem;
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+
+  .admin-kop h1 {
+    color: #fff;
+  }
+
+  .admin-eyebrow {
+    color: rgb(255 255 255 / 0.75);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .admin main {
+    padding-bottom: 4rem;
+  }
+
+  .admin-kaart {
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .admin-kaart h2 {
+    font-size: 1.5rem;
+  }
+
+  .admin-uitleg {
+    margin-top: 0.35rem;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+  }
+
+  .admin-aanmelden {
+    display: grid;
+    gap: 1rem;
+    max-width: 420px;
+  }
+
+  .admin-fout {
+    color: var(--color-error);
+    font-size: 0.95rem;
+  }
+
+  /* Prijstabellen */
+  .admin-tabel {
+    margin-top: 1.25rem;
+  }
+
+  .admin-tabelkop,
+  .admin-rij {
+    display: grid;
+    grid-template-columns: 1fr 140px 140px;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .admin-rij.twee {
+    grid-template-columns: 1fr 140px;
+  }
+
+  .admin-tabelkop {
+    padding-bottom: 0.5rem;
+    color: var(--color-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .admin-rij {
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .admin-naam {
+    color: var(--color-heading);
+    font-weight: 600;
+  }
+
+  .admin-naam small {
+    display: block;
+    color: var(--color-muted);
+    font-weight: 400;
+    font-size: 0.85rem;
+  }
+
+  .admin-bedrag {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-muted);
+  }
+
+  .admin-bedrag input {
+    text-align: right;
+  }
+
+  /* Enkel zichtbaar zodra de kolomtitels wegvallen (zie onderaan) */
+  .admin-seizoen {
+    display: none;
+  }
+
+  .admin-terugzetten {
+    margin-top: 1.25rem;
+  }
+
+  /* Schakelaars */
+  .admin-schakelaar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    color: var(--color-heading);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .admin-schakelaar input {
+    width: 22px;
+    min-height: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    accent-color: var(--color-primary);
+  }
+
+  /* Gesloten periodes */
+  .admin-periodes {
+    margin-top: 1.25rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .admin-periode {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    gap: 1rem;
+    align-items: end;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    background-color: var(--color-sand);
+    border-radius: var(--radius-sm);
+  }
+
+  .admin-periode .field span {
+    color: var(--color-heading);
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .admin-periode .field small {
+    color: var(--color-muted);
+    font-weight: 400;
+  }
+
+  .admin-periode-tekst {
+    grid-column: 1 / -1;
+  }
+
+  .admin-periode .admin-schakelaar {
+    margin-top: 0;
+    padding-bottom: 0.7rem;
+  }
+
+  .admin-verwijder {
+    padding: 0.7rem 0;
+    background: none;
+    border: 0;
+    color: var(--color-error);
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .admin-leeg {
+    margin-top: 1rem;
+    color: var(--color-muted);
+  }
+
+  /* Opslaan */
+  .admin-opslaan {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.75rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .admin-status {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .admin-status.gelukt {
+    color: var(--color-primary);
+  }
+
+  .admin-status.mislukt {
+    color: var(--color-error);
+  }
+
+  @media (max-width: 700px) {
+    .admin-tabelkop {
+      display: none;
+    }
+
+    .admin-rij,
+    .admin-rij.twee {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+      padding-block: 1rem;
+    }
+
+    .admin-bedrag {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 0.5rem;
+      align-items: center;
+    }
+
+    .admin-seizoen {
+      display: block;
+      grid-column: 1 / -1;
+      color: var(--color-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .admin-bedrag input {
+      text-align: left;
+    }
+
+    .admin-periode {
+      grid-template-columns: 1fr;
+      align-items: stretch;
+    }
+
+    .admin-periode .admin-schakelaar {
+      padding-bottom: 0;
+    }
+
+    .admin-verwijder {
+      justify-self: start;
+    }
+  }
+</style>

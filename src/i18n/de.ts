@@ -29,6 +29,12 @@ export const de: Translation = {
     free: 'gratis',
   },
 
+  /** Hinweis oben auf der Website, wenn das Hotel geschlossen ist; {van} und {tot} werden Daten */
+  notice: {
+    closed: 'Wir sind vom {van} bis einschließlich {tot} geschlossen.',
+    closedOneDay: 'Wir sind am {van} geschlossen.',
+  },
+
   footer: {
     tagline: 'Charmantes Hotel im Herzen von Blankenberge, nur 400 Meter vom Strand entfernt.',
     contact: 'Kontakt',
@@ -171,7 +177,7 @@ export const de: Translation = {
     },
     touristTax: {
       title: 'Kurtaxe',
-      text: '2,50 € pro Person und Nacht (nicht inbegriffen)',
+      text: '{bedrag} € pro Person und Nacht (nicht inbegriffen)',
     },
   },
 

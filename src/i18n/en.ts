@@ -29,6 +29,12 @@ export const en: Translation = {
     free: 'free',
   },
 
+  /** Notice at the top of the site when the hotel is closed; {van} and {tot} become dates */
+  notice: {
+    closed: 'We are closed from {van} to {tot} inclusive.',
+    closedOneDay: 'We are closed on {van}.',
+  },
+
   footer: {
     tagline: 'A charming hotel in the heart of Blankenberge, just 400 metres from the beach.',
     contact: 'Contact',
@@ -171,7 +177,7 @@ export const en: Translation = {
     },
     touristTax: {
       title: 'Tourist tax',
-      text: '€ 2.50 per person per night (not included)',
+      text: '€ {bedrag} per person per night (not included)',
     },
   },
 

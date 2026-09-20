@@ -10,6 +10,7 @@ import TwinBedsIcon from './TwinBedsIcon.astro';
 import { bookingPath } from '../data/hotel';
 import type { Room } from '../data/rooms';
 import { localePath, useTranslations, type Locale } from '../i18n';
+import { euro } from '../utils/prijs';
 
 interface Props {
   locale: Locale;
@@ -67,7 +68,9 @@ const bookingHref = `${bookingPath(locale)}?kamer=${encodeURIComponent(room.code
 
     <div class="footer">
       <p class="price">
-        <span>{t.common.from}</span> <strong>&euro; {room.price.low}</strong> <span>{t.common.perNight}</span>
+        <span>{t.common.from}</span>
+        <strong data-prijs={`kamers.${room.id}.laag`}>{euro(room.price.low, t.dateLocale)}</strong>
+        <span>{t.common.perNight}</span>
       </p>
       {isFull
         ? <a href={bookingHref} class="btn btn-outline">{t.rooms.requestRoom}</a>

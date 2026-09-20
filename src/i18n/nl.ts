@@ -34,6 +34,12 @@ export const nl = {
     free: 'gratis',
   },
 
+  /** Melding bovenaan de site als het hotel gesloten is; {van} en {tot} worden datums */
+  notice: {
+    closed: 'Wij zijn gesloten van {van} tot en met {tot}.',
+    closedOneDay: 'Wij zijn gesloten op {van}.',
+  },
+
   footer: {
     tagline: 'Charmant hotel in het hart van Blankenberge, op slechts 400 meter van het strand.',
     contact: 'Contact',
@@ -177,7 +183,7 @@ export const nl = {
     },
     touristTax: {
       title: 'Toeristenbelasting',
-      text: '€ 2,50 per persoon per nacht (niet inbegrepen)',
+      text: '€ {bedrag} per persoon per nacht (niet inbegrepen)',
     },
   },
 

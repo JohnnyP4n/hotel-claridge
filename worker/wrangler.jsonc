@@ -7,6 +7,14 @@
   // Foutmeldingen bekijken in Cloudflare: Workers & Pages > hotel-claridge-aanvraag > Logs
   "observability": { "enabled": true },
 
+  // Hier bewaart de adminpagina (/admin/ op de site) de prijzen, de sluitingsmeldingen
+  // en of de 3 + 1 actie getoond wordt. Deze bewaarplaats bestaat al; de lijst met id's
+  // opvragen kan met:
+  //   cd ~/Documents/hotel-claridge/worker && npx wrangler kv namespace list
+  "kv_namespaces": [
+    { "binding": "INSTELLINGEN", "id": "39a89571dbdf45648508cfb78adba873" }
+  ],
+
   "vars": {
     // Naar dit adres gaan de aanvragen
     "MAIL_TO": "hotelclaridge@msn.com",
@@ -22,6 +30,7 @@
     "SMTP_PORT": "465",
 
     // De geheime Turnstile-sleutel staat ook als geheim bij Cloudflare: npx wrangler secret put TURNSTILE_SECRET
+    // Het wachtwoord van de adminpagina eveneens: npx wrangler secret put ADMIN_WACHTWOORD
 
     // Sites die het formulier mogen versturen (komma-gescheiden)
     "ALLOWED_ORIGINS": "https://johnnyp4n.github.io,http://localhost:4321"

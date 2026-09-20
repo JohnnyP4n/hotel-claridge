@@ -394,3 +394,30 @@ legend {
 legend + * {
   clear: both;
 }
+
+
+/* ================================
+   Melding bovenaan de site
+   Wordt gevuld door src/scripts/instellingen.js met wat het hotel
+   via /admin/ instelde, bv. een sluitingsperiode.
+================================= */
+
+.site-melding {
+  padding-block: 0.7rem;
+  background-color: var(--color-accent);
+  color: #fff;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.site-melding p + p {
+  margin-top: 0.25rem;
+}
+
+.site-melding strong {
+  font-weight: 600;
+}
+
+.site-melding span {
+  color: rgb(255 255 255 / 0.85);
+}

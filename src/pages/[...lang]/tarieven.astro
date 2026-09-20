@@ -10,8 +10,10 @@ import PageHeader from '../../components/PageHeader.astro';
 import Layout from '../../layouts/Layout.astro';
 import headerImage from '../../assets/images/familiekamer.jpeg';
 import { bookingPath } from '../../data/hotel';
+import { touristTax } from '../../data/instellingen';
 import { extraBeds, rooms } from '../../data/rooms';
 import { localePath, localeStaticPaths, useTranslations, type Locale } from '../../i18n';
+import { bedrag, euro } from '../../utils/prijs';
 
 // Maakt deze pagina aan in elke taal: /tarieven/, /fr/tarieven/, /en/tarieven/ en /de/tarieven/
 export const getStaticPaths = localeStaticPaths;
@@ -22,6 +24,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+// De prijzen hieronder zijn die uit src/data/ waarmee de site gebouwd is. Past het hotel
+// ze aan via /admin/, dan vervangt src/scripts/instellingen.js ze in de browser; daarvoor
+// draagt elk bedrag een data-prijs met zijn plaats in de instellingen, bv. "kamers.type-a.laag".
 ---
 
 <Layout locale={locale} title={t.rates.title} description={t.rates.description}>
@@ -53,8 +59,12 @@ const t = useTranslations(locale);
                   </a>
                   <span>{t.rooms.items[room.id].summary}</span>
                 </th>
-                <td data-label={`${t.rates.lowSeason} ${t.common.from}`}>&euro; {room.price.low}</td>
-                <td data-label={`${t.rates.highSeason} ${t.common.from}`}>&euro; {room.price.high}</td>
+                <td data-label={`${t.rates.lowSeason} ${t.common.from}`} data-prijs={`kamers.${room.id}.laag`}>
+                  {euro(room.price.low, t.dateLocale)}
+                </td>
+                <td data-label={`${t.rates.highSeason} ${t.common.from}`} data-prijs={`kamers.${room.id}.hoog`}>
+                  {euro(room.price.high, t.dateLocale)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -65,7 +75,7 @@ const t = useTranslations(locale);
         </p>
       </div>
 
-      <div class="promo card">
+      <div class="promo card" data-promo="3plus1">
         <span class="promo-icon"><Gift size={26} /></span>
         <div class="promo-text">
           <p class="promo-eyebrow">{t.rates.promo.eyebrow}</p>
@@ -86,7 +96,10 @@ const t = useTranslations(locale);
                 <span>{t.rates.extraBeds.items[bed.id]}</span>
                 {bed.price === null
                   ? <strong>{t.common.free}</strong>
-                  : <span class="bed-price"><strong>&euro; {bed.price}</strong> <small>{t.common.perNight}</small></span>}
+                  : <span class="bed-price">
+                      <strong data-prijs={`extraBedden.${bed.id}`}>{euro(bed.price, t.dateLocale)}</strong>
+                      <small>{t.common.perNight}</small>
+                    </span>}
               </li>
             ))}
           </ul>
@@ -104,7 +117,9 @@ const t = useTranslations(locale);
         <div class="info card">
           <span class="info-icon"><ReceiptEuro size={22} /></span>
           <h2>{t.rates.touristTax.title}</h2>
-          <p>{t.rates.touristTax.text}</p>
+          <p data-prijs="toeristenbelasting" data-sjabloon={t.rates.touristTax.text}>
+            {t.rates.touristTax.text.replace('{bedrag}', bedrag(touristTax, t.dateLocale))}
+          </p>
         </div>
       </div>
     </div>

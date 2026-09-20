@@ -40,14 +40,39 @@ Alle teksten staan in `src/i18n/`: één bestand per taal (`nl.ts`, `fr.ts`, `en
 `de.ts`) met exact dezelfde sleutels. `nl.ts` is het voorbeeld; ontbreekt er iets in een
 andere taal, dan geeft de editor meteen een foutmelding. Ook de namen en beschrijvingen
 van de kamers staan daar (`rooms.items`). Prijzen, foto's en het gsm-nummer staan in
-`src/data/`, want die zijn in elke taal hetzelfde.
+`src/data/`, want die zijn in elke taal hetzelfde. De prijzen die daar staan, zijn de
+standaard: het hotel kan ze zelf aanpassen op de adminpagina (zie hieronder).
 
 Een tekst aanpassen doe je dus in de vier bestanden. Rechtsboven in het menu staat de
 taalkeuze (NL FR EN DE); die houdt de bezoeker op dezelfde pagina.
 
+## Adminpagina
+
+Op `/admin/` past het hotel zelf aan wat regelmatig verandert:
+
+- de **prijzen** per kamer (laag- en hoogseizoen), de extra bedden en de toeristenbelasting;
+- **gesloten periodes**: bovenaan elke pagina verschijnt dan "Wij zijn gesloten van ... tot
+  en met ...", in de taal van de bezoeker. De melding verdwijnt vanzelf na de laatste dag,
+  en elke periode kan apart aan- of uitgezet worden;
+- de **3 + 1 actie** op de tarievenpagina aan of uit.
+
+Aanmelden gebeurt met één wachtwoord, dat als geheim bij Cloudflare staat
+(`ADMIN_WACHTWOORD`, zie `worker/README.md`). De pagina staat niet in het menu en niet in
+Google.
+
+Het opslaan gaat naar hetzelfde script bij Cloudflare als het aanvraagformulier, dat alles
+bewaart in Cloudflare KV. **De site moet er niet voor herbouwd worden:** elke pagina haalt
+de instellingen op bij het laden en past ze meteen toe (`src/scripts/instellingen.js`).
+Een wijziging staat dus binnen de minuut online.
+
+De waarden in `src/data/rooms.ts` en `src/data/instellingen.ts` blijven de standaard: die
+zitten in de pagina's zoals ze gebouwd zijn, en blijven staan zolang het hotel niets
+aanpaste of als Cloudflare even onbereikbaar is. Wil je een prijs blijvend in de code
+zetten, pas ze dan daar aan én op de adminpagina.
+
 ## Aanvraagformulier
 
-Het formulier op `/boeking/` gaat naar een eigen script bij Cloudflare Workers (map
+Het formulier op `/boeking/` gaat naar hetzelfde script bij Cloudflare Workers (map
 `worker/`, gratis). Dat mailt de aanvraag via de mailbox bij Combell naar het hotel en
 stuurt de gast een bevestiging in zijn eigen taal. De mail naar het hotel blijft
 Nederlands, met de taal van de gast erbij. Cloudflare Turnstile houdt spambots tegen. Met
@@ -67,10 +92,11 @@ src/
   i18n/              Alle teksten, één bestand per taal (nl, fr, en, de)
   layouts/           Paginasjabloon met <head>, menu en footer
   pages/[...lang]/   Eén bestand per pagina; Astro maakt er elke taal van
+  pages/admin.astro  De adminpagina op /admin/, los van de gewone site
   scripts/           JavaScript voor de pagina's
   styles/            Stylesheet voor de hele site
   utils/             Hulpfuncties, zoals withBase() voor interne links
-worker/              Script bij Cloudflare dat het aanvraagformulier mailt
+worker/              Script bij Cloudflare: aanvragen mailen en instellingen bewaren
 astro.config.mjs     Astro-instellingen
 ```
 
