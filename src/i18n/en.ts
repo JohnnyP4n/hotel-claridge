@@ -188,13 +188,6 @@ export const en: Translation = {
     email: 'E-mail',
     happytripNoteHtml:
       'Planning to come by train? Let us know when you book and receive a <strong>Happy Trip discount code</strong> for your journey!',
-    form: {
-      title: 'Send us a message',
-      name: 'Name',
-      email: 'E-mail',
-      message: 'Message',
-      send: 'Send',
-    },
     mapTitle: 'Location of Hotel Claridge on Google Maps',
   },
 

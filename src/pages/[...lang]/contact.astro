@@ -65,27 +65,6 @@ const t = useTranslations(locale);
         </p>
       </div>
 
-      <div class="form-card card">
-        <h2>{t.contact.form.title}</h2>
-        <form id="contact-form">
-          <div class="field">
-            <label for="contact-name">{t.contact.form.name}</label>
-            <input type="text" id="contact-name" autocomplete="name" required />
-          </div>
-          <div class="field">
-            <label for="contact-email">{t.contact.form.email}</label>
-            <input type="email" id="contact-email" autocomplete="email" required />
-          </div>
-          <div class="field">
-            <label for="contact-message">{t.contact.form.message}</label>
-            <textarea id="contact-message" required></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">{t.contact.form.send}</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="container">
       <div class="map card">
         <iframe
           src={hotel.mapEmbedUrl}
@@ -104,7 +83,7 @@ const t = useTranslations(locale);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(2rem, 5vw, 4rem);
-    align-items: start;
+    align-items: stretch;
   }
 
   h2 {
@@ -174,28 +153,16 @@ const t = useTranslations(locale);
     color: var(--color-primary);
   }
 
-  .form-card {
-    padding: clamp(1.5rem, 4vw, 2.5rem);
-  }
-
-  form {
-    display: grid;
-    gap: 1.25rem;
-  }
-
-  form .btn {
-    justify-self: start;
-  }
-
   .map {
-    margin-top: clamp(3rem, 6vw, 4.5rem);
     overflow: hidden;
   }
 
+  /* De kaart vult de hoogte van de contactgegevens ernaast */
   .map iframe {
     display: block;
     width: 100%;
-    aspect-ratio: 21 / 9;
+    height: 100%;
+    min-height: 420px;
     border: 0;
   }
 
@@ -205,6 +172,8 @@ const t = useTranslations(locale);
     }
 
     .map iframe {
+      height: auto;
+      min-height: 0;
       aspect-ratio: 1 / 1;
     }
   }

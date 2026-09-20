@@ -188,13 +188,6 @@ export const de: Translation = {
     email: 'E-Mail',
     happytripNoteHtml:
       'Möchten Sie mit dem Zug kommen? Sagen Sie es uns bei Ihrer Reservierung und erhalten Sie einen <strong>Happy-Trip-Rabattcode</strong> für Ihre Reise!',
-    form: {
-      title: 'Schreiben Sie uns',
-      name: 'Name',
-      email: 'E-Mail',
-      message: 'Nachricht',
-      send: 'Senden',
-    },
     mapTitle: 'Lage des Hotel Claridge auf Google Maps',
   },
 

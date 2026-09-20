@@ -194,13 +194,6 @@ export const nl = {
     email: 'E-mail',
     happytripNoteHtml:
       'Ben je van plan met de trein te komen? Laat het ons weten bij je reservatie en ontvang een <strong>Happy Trip kortingscode</strong> voor je reis!',
-    form: {
-      title: 'Stuur ons een bericht',
-      name: 'Naam',
-      email: 'E-mail',
-      message: 'Bericht',
-      send: 'Verstuur',
-    },
     mapTitle: 'Ligging van Hotel Claridge op Google Maps',
   },
 
