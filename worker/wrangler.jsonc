@@ -32,7 +32,8 @@
     // De geheime Turnstile-sleutel staat ook als geheim bij Cloudflare: npx wrangler secret put TURNSTILE_SECRET
     // Het wachtwoord van de adminpagina eveneens: npx wrangler secret put ADMIN_WACHTWOORD
 
-    // Sites die het formulier mogen versturen (komma-gescheiden)
-    "ALLOWED_ORIGINS": "https://johnnyp4n.github.io,http://localhost:4321"
+    // Sites die het formulier mogen versturen (komma-gescheiden). Het github.io-adres
+    // staat er nog bij zolang de oude links van de zoekmachines doorverwezen worden.
+    "ALLOWED_ORIGINS": "https://hotel-claridge.be,https://www.hotel-claridge.be,https://johnnyp4n.github.io,http://localhost:4321"
   }
 }

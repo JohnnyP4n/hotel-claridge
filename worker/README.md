@@ -45,8 +45,8 @@ Vooraf bij Combell (E-mail hosting → hotel-claridge.be):
 - bij DNS een SPF-record (TXT, hostnaam leeg): `v=spf1 include:_spf.relay.mailprotect.be -all`,
   zodat de mails niet als spam aankomen.
 
-Vooraf bij Cloudflare: een **Turnstile-widget** met als hostnamen `johnnyp4n.github.io` en
-`localhost`. De sitekey komt in `src/pages/[...lang]/boeking.astro` (`turnstileSiteKey`).
+Vooraf bij Cloudflare: een **Turnstile-widget** met als hostnamen `hotel-claridge.be`,
+`www.hotel-claridge.be`, `johnnyp4n.github.io` en `localhost`. De sitekey komt in `src/pages/[...lang]/boeking.astro` (`turnstileSiteKey`).
 
 Daarna, elk commando op één regel:
 

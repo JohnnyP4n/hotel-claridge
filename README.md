@@ -9,20 +9,31 @@ Vereist: Node.js 22.12 of nieuwer.
 | Commando          | Wat het doet                                             |
 | ----------------- | -------------------------------------------------------- |
 | `npm install`     | Installeert Astro (eenmalig, of na een `git pull`)       |
-| `npm run dev`     | Start de site lokaal op http://localhost:4321/hotel-claridge/ |
+| `npm run dev`     | Start de site lokaal op http://localhost:4321/              |
 | `npm run build`   | Maakt de publiceerbare site aan in de map `dist/`        |
 | `npm run preview` | Toont de gebouwde site uit `dist/` om te controleren     |
 
 ## Online zetten
 
-De site staat op GitHub Pages: https://johnnyp4n.github.io/hotel-claridge/
+De site staat op GitHub Pages onder het eigen domein: https://hotel-claridge.be
+`www.hotel-claridge.be` en het oude adres `johnnyp4n.github.io/hotel-claridge/`
+verwijzen daar automatisch naartoe.
 
 Bij elke push naar `main` bouwt GitHub Actions de site en zet ze online
 (zie `.github/workflows/deploy.yml`). In de repository moet
-**Settings → Pages → Source** op **GitHub Actions** staan.
+**Settings → Pages → Source** op **GitHub Actions** staan en
+**Settings → Pages → Custom domain** op `hotel-claridge.be`, met
+**Enforce HTTPS** aan.
 
-Omdat de site in de submap `/hotel-claridge` staat, gebruiken interne links
-`withBase()` uit `src/utils/paths.ts`, bv. `withBase('/kamers/')`.
+Het domein staat bij Combell. In de DNS wijzen vier A-records van
+`hotel-claridge.be` naar GitHub (185.199.108–111.153) en is `www` een CNAME naar
+`johnnyp4n.github.io`. Het bestand `public/CNAME` houdt het domein ingesteld bij
+elke publicatie: verwijder het niet. De mail van het hotel (MX bij Combell) staat
+hier volledig los van.
+
+Interne links gebruiken `withBase()` uit `src/utils/paths.ts`, bv.
+`withBase('/kamers/')`. De site staat nu in de wortel van het domein, dus daar komt
+niets meer voor te staan.
 
 ## Talen
 
