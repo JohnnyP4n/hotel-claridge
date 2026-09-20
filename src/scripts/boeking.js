@@ -7,6 +7,11 @@ const errorMessage = document.getElementById('booking-error');
 const sentMessage = document.getElementById('booking-sent');
 const checkMessage = document.getElementById('booking-check');
 
+// De teksten van dit script staan als data-attributen op het formulier (zie boeking.astro),
+// zodat ze in elke taal kloppen: data-lang, data-submit, data-sending, data-dates-missing
+// en data-dates-order
+const texts = bookingForm.dataset;
+
 // Kamertype vooraf kiezen als de bezoeker via "Vraag deze kamer aan" komt (bv. ?kamer=Type%20A)
 function preselectRoom() {
     const requestedRoom = new URLSearchParams(window.location.search).get('kamer');
@@ -44,12 +49,12 @@ function setMinimumDates() {
 
 function validateDates() {
     if (!checkinInput.value || !checkoutInput.value) {
-        alert('Gelieve zowel een aankomst- als vertrekdatum in te vullen.');
+        alert(texts.datesMissing);
         return false;
     }
 
     if (countNights(checkinInput.value, checkoutInput.value) < 1) {
-        alert('De vertrekdatum moet minstens één dag na de aankomstdatum zijn.');
+        alert(texts.datesOrder);
         checkoutInput.value = '';
         return false;
     }
@@ -71,6 +76,8 @@ function buildRequest(form) {
         // bv. "Type A - Comfortkamer met bad", voor de bevestiging aan de gast
         roomName: roomSelect.selectedOptions[0]?.textContent ?? '',
         remarks: fields.remarks.value,
+        // De taal van de pagina; het script in worker/ mailt de bevestiging in die taal
+        lang: texts.lang,
         botcheck: fields.botcheck.checked,
         turnstileToken: turnstileToken(),
     };
@@ -83,7 +90,7 @@ function turnstileToken() {
 
 async function sendRequest(form) {
     submitButton.disabled = true;
-    submitButton.textContent = 'Bezig met versturen...';
+    submitButton.textContent = texts.sending;
     errorMessage.hidden = true;
 
     try {
@@ -105,7 +112,7 @@ async function sendRequest(form) {
         console.error('Aanvraag niet verstuurd:', error);
         errorMessage.hidden = false;
         submitButton.disabled = false;
-        submitButton.textContent = 'Vraag verblijf aan';
+        submitButton.textContent = texts.submit;
         // Een Turnstile-token werkt maar één keer: vraag een nieuw aan voor de volgende poging
         window.turnstile?.reset();
     }

@@ -5,23 +5,30 @@ import Coffee from '@lucide/astro/icons/coffee';
 import Gift from '@lucide/astro/icons/gift';
 import Info from '@lucide/astro/icons/info';
 import ReceiptEuro from '@lucide/astro/icons/receipt-euro';
-import CtaBand from '../components/CtaBand.astro';
-import PageHeader from '../components/PageHeader.astro';
-import Layout from '../layouts/Layout.astro';
-import headerImage from '../assets/images/familiekamer.jpeg';
-import { bookingPath } from '../data/hotel';
-import { extraBeds, includedInEveryRoom, rooms, touristTax } from '../data/rooms';
-import { withBase } from '../utils/paths';
+import CtaBand from '../../components/CtaBand.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Layout from '../../layouts/Layout.astro';
+import headerImage from '../../assets/images/familiekamer.jpeg';
+import { bookingPath } from '../../data/hotel';
+import { extraBeds, rooms } from '../../data/rooms';
+import { localePath, localeStaticPaths, useTranslations, type Locale } from '../../i18n';
+
+// Maakt deze pagina aan in elke taal: /tarieven/, /fr/tarieven/, /en/tarieven/ en /de/tarieven/
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
-<Layout
-  title="Tarieven"
-  description="Tarieven van Hotel Claridge in Blankenberge, ontbijt inbegrepen. Bekijk de prijzen per kamertype voor laag- en hoogseizoen."
->
+<Layout locale={locale} title={t.rates.title} description={t.rates.description}>
   <PageHeader
-    eyebrow="Tarieven"
-    title="Tarieven"
-    intro="Heldere prijzen per kamertype, ontbijt altijd inbegrepen."
+    eyebrow={t.rates.eyebrow}
+    title={t.rates.heading}
+    intro={t.rates.intro}
     image={headerImage}
   />
 
@@ -29,55 +36,57 @@ import { withBase } from '../utils/paths';
     <div class="container">
       <div class="table-card card">
         <table class="rates-table">
-          <caption class="sr-only">Prijzen per kamertype</caption>
+          <caption class="sr-only">{t.rates.tableCaption}</caption>
           <thead>
             <tr>
-              <th scope="col">Type kamer</th>
-              <th scope="col">Laagseizoen <span>vanaf</span></th>
-              <th scope="col">Hoogseizoen <span>vanaf</span></th>
+              <th scope="col">{t.rates.roomType}</th>
+              <th scope="col">{t.rates.lowSeason} <span>{t.common.from}</span></th>
+              <th scope="col">{t.rates.highSeason} <span>{t.common.from}</span></th>
             </tr>
           </thead>
           <tbody>
             {rooms.map((room) => (
               <tr>
                 <th scope="row">
-                  <a href={withBase(`/kamers/#${room.id}`)}>{room.code !== room.name ? `${room.code}: ${room.name}` : room.name}</a>
-                  <span>{room.summary}</span>
+                  <a href={localePath(locale, `/kamers/#${room.id}`)}>
+                    {room.showCode ? `${room.code}: ${t.rooms.items[room.id].name}` : t.rooms.items[room.id].name}
+                  </a>
+                  <span>{t.rooms.items[room.id].summary}</span>
                 </th>
-                <td data-label="Laagseizoen vanaf">&euro; {room.price.low}</td>
-                <td data-label="Hoogseizoen vanaf">&euro; {room.price.high}</td>
+                <td data-label={`${t.rates.lowSeason} ${t.common.from}`}>&euro; {room.price.low}</td>
+                <td data-label={`${t.rates.highSeason} ${t.common.from}`}>&euro; {room.price.high}</td>
               </tr>
             ))}
           </tbody>
         </table>
         <p class="table-note">
           <Info size={18} />
-          <span>Prijzen per kamer per nacht, ontbijt inbegrepen. De prijzen kunnen variëren afhankelijk van de periode.</span>
+          <span>{t.rates.note}</span>
         </p>
       </div>
 
       <div class="promo card">
         <span class="promo-icon"><Gift size={26} /></span>
         <div class="promo-text">
-          <p class="promo-eyebrow">Laagseizoen</p>
-          <h2>3 + 1 nacht gratis</h2>
-          <p>Boekt u rechtstreeks bij ons in het laagseizoen? Dan betaalt u 3 nachten en is de 4de nacht gratis. Geldig op gewone dagen, niet tijdens drukke periodes.</p>
+          <p class="promo-eyebrow">{t.rates.promo.eyebrow}</p>
+          <h2>{t.rates.promo.title}</h2>
+          <p>{t.rates.promo.text}</p>
         </div>
-        <a href={bookingPath} class="btn btn-primary">Vraag verblijf aan</a>
+        <a href={bookingPath(locale)} class="btn btn-primary">{t.nav.book}</a>
       </div>
 
       <div class="info-grid">
         <div class="info card">
           <span class="info-icon"><Baby size={22} /></span>
-          <h2>Extra bedden</h2>
-          <p class="muted">Niet mogelijk bij Type C</p>
+          <h2>{t.rates.extraBeds.title}</h2>
+          <p class="muted">{t.rates.extraBeds.note}</p>
           <ul class="price-list">
             {extraBeds.map((bed) => (
               <li>
-                <span>{bed.label}</span>
+                <span>{t.rates.extraBeds.items[bed.id]}</span>
                 {bed.price === null
-                  ? <strong>gratis</strong>
-                  : <span class="bed-price"><strong>&euro; {bed.price}</strong> <small>per nacht</small></span>}
+                  ? <strong>{t.common.free}</strong>
+                  : <span class="bed-price"><strong>&euro; {bed.price}</strong> <small>{t.common.perNight}</small></span>}
               </li>
             ))}
           </ul>
@@ -85,23 +94,23 @@ import { withBase } from '../utils/paths';
 
         <div class="info card">
           <span class="info-icon"><Coffee size={22} /></span>
-          <h2>Inbegrepen</h2>
+          <h2>{t.rates.included.title}</h2>
           <ul class="check-list">
-            {includedInEveryRoom.map((item) => <li><Check size={17} /> {item}</li>)}
+            {t.rooms.includedItems.map((item) => <li><Check size={17} /> {item}</li>)}
           </ul>
-          <p class="muted extra"><strong>Extra bij type A, B en familiekamer:</strong> minibar / frigo en waterkoker.</p>
+          <p class="muted extra" set:html={t.rates.included.extraHtml} />
         </div>
 
         <div class="info card">
           <span class="info-icon"><ReceiptEuro size={22} /></span>
-          <h2>Toeristenbelasting</h2>
-          <p>{touristTax}</p>
+          <h2>{t.rates.touristTax.title}</h2>
+          <p>{t.rates.touristTax.text}</p>
         </div>
       </div>
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand locale={locale} />
 </Layout>
 
 <style>

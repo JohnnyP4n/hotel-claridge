@@ -2,8 +2,10 @@
 
 Ontvangt de aanvragen van het formulier op `/boeking/`, controleert met Cloudflare Turnstile
 dat er een mens achter zit, mailt de aanvraag naar het hotel en stuurt de gast een
-bevestiging. Het mailen gaat via de mailbox `website@hotel-claridge.be` bij Combell.
-Het draait gratis op Cloudflare Workers (100.000 aanvragen per dag).
+bevestiging in zijn eigen taal (Nederlands, Frans, Engels of Duits; de teksten staan
+bovenaan `src/index.js` bij `LANGUAGES`). De mail naar het hotel blijft Nederlands, met
+de taal van de gast erbij. Het mailen gaat via de mailbox `website@hotel-claridge.be`
+bij Combell. Het draait gratis op Cloudflare Workers (100.000 aanvragen per dag).
 
 - Code: `src/index.js`
 - Instellingen (ontvanger, mailbox, toegelaten sites): `wrangler.jsonc`
@@ -19,7 +21,7 @@ Vooraf bij Combell (E-mail hosting → hotel-claridge.be):
   zodat de mails niet als spam aankomen.
 
 Vooraf bij Cloudflare: een **Turnstile-widget** met als hostnamen `johnnyp4n.github.io` en
-`localhost`. De sitekey komt in `src/pages/boeking.astro` (`turnstileSiteKey`).
+`localhost`. De sitekey komt in `src/pages/[...lang]/boeking.astro` (`turnstileSiteKey`).
 
 Daarna in deze map (`cd worker`):
 

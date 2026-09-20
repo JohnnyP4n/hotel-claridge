@@ -5,14 +5,26 @@ import Coffee from '@lucide/astro/icons/coffee';
 import ExternalLink from '@lucide/astro/icons/external-link';
 import Phone from '@lucide/astro/icons/phone';
 import TrainFront from '@lucide/astro/icons/train-front';
-import PageHeader from '../components/PageHeader.astro';
-import Layout from '../layouts/Layout.astro';
-import headerImage from '../assets/images/strand.jpg';
-import { hotel } from '../data/hotel';
-import { rooms } from '../data/rooms';
+import PageHeader from '../../components/PageHeader.astro';
+import Layout from '../../layouts/Layout.astro';
+import headerImage from '../../assets/images/strand.jpg';
+import { hotel } from '../../data/hotel';
+import { rooms } from '../../data/rooms';
+import { localeStaticPaths, useTranslations, type Locale } from '../../i18n';
+
+// Maakt deze pagina aan in elke taal: /boeking/, /fr/boeking/, /en/boeking/ en /de/boeking/
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 
 // Het eigen script bij Cloudflare (map worker/) mailt de aanvraag naar het hotel en een
-// bevestiging naar de gast. Ook lokaal (npm run dev): elke test verstuurt dus echte mails.
+// bevestiging naar de gast, in de taal van de bezoeker. Ook lokaal (npm run dev): elke
+// test verstuurt dus echte mails.
 const formEndpoint = 'https://hotel-claridge-aanvraag.hotelclaridge.workers.dev';
 
 // Cloudflare Turnstile houdt spambots tegen. De sitekey is openbaar; de geheime sleutel staat
@@ -20,69 +32,80 @@ const formEndpoint = 'https://hotel-claridge-aanvraag.hotelclaridge.workers.dev'
 const turnstileSiteKey = '0x4AAAAAAE86cn95It_fBqiX';
 ---
 
-<Layout
-  title="Vraag verblijf aan"
-  description="Vraag rechtstreeks uw verblijf aan bij Hotel Claridge in Blankenberge. Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op."
->
+<Layout locale={locale} title={t.booking.title} description={t.booking.description}>
   <PageHeader
-    eyebrow="Rechtstreeks boeken"
-    title="Vraag uw verblijf aan"
-    intro="Vul onderstaand formulier in om een verblijf aan te vragen. Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op."
+    eyebrow={t.booking.eyebrow}
+    title={t.booking.heading}
+    intro={t.booking.intro}
     image={headerImage}
     imagePosition="center 65%"
   />
 
   <section class="section" id="booking">
     <div class="container booking-grid">
-      <!-- src/scripts/boeking.js verstuurt het formulier zonder de pagina te verlaten -->
-      <form id="booking-form" class="card" action={formEndpoint} method="POST">
+      <!-- src/scripts/boeking.js verstuurt het formulier zonder de pagina te verlaten en
+           leest de teksten hieronder uit de data-attributen, zodat het script zelf
+           geen vertalingen bevat -->
+      <form
+        id="booking-form"
+        class="card"
+        action={formEndpoint}
+        method="POST"
+        data-lang={locale}
+        data-submit={t.booking.submit}
+        data-sending={t.booking.sending}
+        data-dates-missing={t.booking.datesMissing}
+        data-dates-order={t.booking.datesOrder}
+      >
         <!-- Spamval: onzichtbaar voor bezoekers, spambots vinken dit aan -->
         <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
         <fieldset>
-          <legend>Jouw gegevens</legend>
+          <legend>{t.booking.yourDetails}</legend>
           <div class="fields">
             <div class="field wide">
-              <label for="name">Naam</label>
+              <label for="name">{t.booking.name}</label>
               <input type="text" id="name" name="name" autocomplete="name" required />
             </div>
             <div class="field">
-              <label for="email">E-mail</label>
+              <label for="email">{t.booking.email}</label>
               <input type="email" id="email" name="email" autocomplete="email" required />
             </div>
             <div class="field">
-              <label for="phone">Gsm-nummer <span class="optional">(optioneel)</span></label>
-              <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="bijv. +32 123 45 67 89" />
+              <label for="phone">{t.booking.phone} <span class="optional">{t.booking.optional}</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder={t.booking.phonePlaceholder} />
             </div>
           </div>
         </fieldset>
 
         <fieldset>
-          <legend>Uw aanvraag</legend>
+          <legend>{t.booking.yourRequest}</legend>
           <div class="fields">
             <div class="field">
-              <label for="checkin">Aankomstdatum</label>
+              <label for="checkin">{t.booking.checkin}</label>
               <input type="date" id="checkin" name="checkin" required />
             </div>
             <div class="field">
-              <label for="checkout">Vertrekdatum</label>
+              <label for="checkout">{t.booking.checkout}</label>
               <input type="date" id="checkout" name="checkout" required />
             </div>
             <div class="field">
-              <label for="guests">Aantal personen</label>
+              <label for="guests">{t.booking.guests}</label>
               <input type="number" id="guests" name="guests" min="1" max="4" required />
             </div>
             <div class="field">
-              <label for="room-type">Gewenst kamertype</label>
+              <label for="room-type">{t.booking.roomType}</label>
               <select id="room-type" name="room-type" required>
-                <option value="" disabled selected hidden>Kies een kamer</option>
+                <option value="" disabled selected hidden>{t.booking.chooseRoom}</option>
                 {rooms.map((room) => (
-                  <option value={room.code}>{room.code !== room.name ? `${room.code} - ${room.name}` : room.name}</option>
+                  <option value={room.code}>
+                    {room.showCode ? `${room.code} - ${t.rooms.items[room.id].name}` : t.rooms.items[room.id].name}
+                  </option>
                 ))}
               </select>
             </div>
             <div class="field wide">
-              <label for="remarks">Opmerkingen <span class="optional">(optioneel)</span></label>
+              <label for="remarks">{t.booking.remarks} <span class="optional">{t.booking.optional}</span></label>
               <textarea id="remarks" name="remarks" rows="4"></textarea>
             </div>
           </div>
@@ -90,52 +113,46 @@ const turnstileSiteKey = '0x4AAAAAAE86cn95It_fBqiX';
 
         <div class="submit">
           <!-- Spamcontrole van Cloudflare: meestal meteen "gelukt", soms vraagt ze een klik -->
-          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-language="nl" data-size="flexible"></div>
-          <p id="booking-check" class="form-error" role="alert" hidden>
-            Vink eerst het vakje "Ik ben geen robot" hierboven aan.
-          </p>
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-language={t.turnstile} data-size="flexible"></div>
+          <p id="booking-check" class="form-error" role="alert" hidden>{t.booking.robotCheck}</p>
           <p id="booking-error" class="form-error" role="alert" hidden>
-            Het versturen is niet gelukt. Probeer het opnieuw of bel ons op
-            <a href={hotel.mobile.href}>{hotel.mobile.label}</a>.
+            {t.booking.error} <a href={hotel.mobile.href}>{hotel.mobile.label}</a>.
           </p>
-          <button type="submit" class="btn btn-primary">Vraag verblijf aan</button>
+          <button type="submit" class="btn btn-primary">{t.booking.submit}</button>
         </div>
       </form>
 
       <div id="booking-sent" class="card sent" tabindex="-1" hidden>
         <CircleCheck size={40} />
-        <h2>Bedankt voor uw aanvraag</h2>
-        <p>
-          Wij hebben uw aanvraag goed ontvangen. We controleren de beschikbaarheid en nemen zo snel
-          mogelijk contact met u op via e-mail of telefoon.
-        </p>
-        <p>U ontvangt ook een bevestiging van uw aanvraag per e-mail.</p>
+        <h2>{t.booking.sent.title}</h2>
+        <p>{t.booking.sent.text}</p>
+        <p>{t.booking.sent.mail}</p>
       </div>
 
       <aside class="aside">
         <div class="card aside-card">
-          <h2>Goed om te weten</h2>
+          <h2>{t.booking.aside.title}</h2>
           <ul>
             <li>
               <CalendarCheck size={20} />
-              <span>Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.</span>
+              <span>{t.booking.aside.availability}</span>
             </li>
             <li>
               <Coffee size={20} />
-              <span>Het ontbijt is inbegrepen bij elke kamer.</span>
+              <span>{t.booking.aside.breakfast}</span>
             </li>
             <li>
               <TrainFront size={20} />
-              <span>Komt u met de trein? Vermeld het bij uw opmerkingen en ontvang een <strong>Happy Trip kortingscode</strong>.</span>
+              <span set:html={t.booking.aside.trainHtml} />
             </li>
           </ul>
         </div>
 
         <div class="card aside-card">
-          <h2>Liever telefonisch?</h2>
+          <h2>{t.booking.aside.phoneTitle}</h2>
           <a href={hotel.mobile.href} class="phone"><Phone size={20} /> {hotel.mobile.label}</a>
           <a href={hotel.bookingUrl} target="_blank" rel="noopener" class="external">
-            Of boek via Booking.com <ExternalLink size={15} />
+            {t.common.bookingCom} <ExternalLink size={15} />
           </a>
         </div>
       </aside>
@@ -145,7 +162,7 @@ const turnstileSiteKey = '0x4AAAAAAE86cn95It_fBqiX';
 
 <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
-  import '../scripts/boeking.js';
+  import '../../scripts/boeking.js';
 </script>
 
 <style>

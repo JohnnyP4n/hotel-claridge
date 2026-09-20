@@ -1,22 +1,30 @@
 ---
 import Check from '@lucide/astro/icons/check';
 import TrainFront from '@lucide/astro/icons/train-front';
-import CtaBand from '../components/CtaBand.astro';
-import PageHeader from '../components/PageHeader.astro';
-import RoomCard from '../components/RoomCard.astro';
-import Layout from '../layouts/Layout.astro';
-import headerImage from '../assets/images/kamermetbad.jpeg';
-import { includedInEveryRoom, rooms } from '../data/rooms';
+import CtaBand from '../../components/CtaBand.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import RoomCard from '../../components/RoomCard.astro';
+import Layout from '../../layouts/Layout.astro';
+import headerImage from '../../assets/images/kamermetbad.jpeg';
+import { rooms } from '../../data/rooms';
+import { localeStaticPaths, useTranslations, type Locale } from '../../i18n';
+
+// Maakt deze pagina aan in elke taal: /kamers/, /fr/kamers/, /en/kamers/ en /de/kamers/
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
-<Layout
-  title="Kamers"
-  description="Ontdek de kamers van Hotel Claridge in Blankenberge: comfortkamers met bad of douche, een standaardkamer en een familiekamer voor 4 personen."
->
+<Layout locale={locale} title={t.rooms.title} description={t.rooms.description}>
   <PageHeader
-    eyebrow="Kamers"
-    title="Onze kamers"
-    intro="Comfortabele kamers met een huiselijke sfeer, op 400 meter van het strand."
+    eyebrow={t.rooms.eyebrow}
+    title={t.rooms.heading}
+    intro={t.rooms.intro}
     image={headerImage}
     imagePosition="center 60%"
   />
@@ -24,24 +32,24 @@ import { includedInEveryRoom, rooms } from '../data/rooms';
   <section class="section">
     <div class="container">
       <div class="included card">
-        <h2>Inbegrepen bij elke kamer</h2>
+        <h2>{t.rooms.included}</h2>
         <ul>
-          {includedInEveryRoom.map((item) => <li><Check size={18} /> {item}</li>)}
+          {t.rooms.includedItems.map((item) => <li><Check size={18} /> {item}</li>)}
         </ul>
       </div>
 
       <div class="rooms-grid">
-        {rooms.map((room) => <RoomCard room={room} />)}
+        {rooms.map((room) => <RoomCard locale={locale} room={room} />)}
       </div>
 
       <p class="happytrip-note">
         <TrainFront size={22} />
-        <span>Boek rechtstreeks bij ons en ontvang het <strong>Happy Trip gastenvoordeel</strong> – korting op treinvervoer naar de kust!</span>
+        <span set:html={t.rooms.happytripNoteHtml} />
       </p>
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand locale={locale} />
 </Layout>
 
 <style>

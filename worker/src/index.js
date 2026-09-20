@@ -15,6 +15,85 @@ const HOTEL = {
     address: 'de Limburg Stirumstraat 2, 8370 Blankenberge',
 };
 
+// De gast krijgt de bevestiging in de taal van de website waarop hij het formulier invulde
+// (het veld "lang", zie src/scripts/boeking.js). De mail naar het hotel blijft Nederlands,
+// met de taal van de gast erbij.
+const LANGUAGES = {
+    nl: {
+        name: 'Nederlands',
+        dateLocale: 'nl-BE',
+        subject: (dates) => `Uw aanvraag bij ${HOTEL.name} (${dates})`,
+        greeting: (name) => `Beste ${name},`,
+        thanks: `Bedankt voor uw aanvraag bij ${HOTEL.name}. We hebben ze goed ontvangen.`,
+        notConfirmed:
+            'Dit is nog geen bevestiging van uw reservatie. We controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.',
+        heading: 'Uw aanvraag',
+        checkin: 'Aankomst',
+        checkout: 'Vertrek',
+        nights: 'Aantal nachten',
+        guests: 'Aantal personen',
+        room: 'Kamertype',
+        questions: `Vragen of iets wijzigen? Beantwoord deze e-mail of bel ons op ${HOTEL.phone}.`,
+        regards: 'Met vriendelijke groeten,',
+    },
+    fr: {
+        name: 'Frans',
+        dateLocale: 'fr-BE',
+        subject: (dates) => `Votre demande à l’${HOTEL.name} (${dates})`,
+        greeting: (name) => `Bonjour ${name},`,
+        thanks: `Merci pour votre demande à l’${HOTEL.name}. Nous l’avons bien reçue.`,
+        notConfirmed:
+            'Ceci n’est pas encore une confirmation de votre réservation. Nous vérifions les disponibilités et vous recontactons dans les plus brefs délais.',
+        heading: 'Votre demande',
+        checkin: 'Arrivée',
+        checkout: 'Départ',
+        nights: 'Nombre de nuits',
+        guests: 'Nombre de personnes',
+        room: 'Type de chambre',
+        questions: `Une question ou un changement ? Répondez à cet e-mail ou appelez-nous au ${HOTEL.phone}.`,
+        regards: 'Cordialement,',
+    },
+    en: {
+        name: 'Engels',
+        dateLocale: 'en-GB',
+        subject: (dates) => `Your request at ${HOTEL.name} (${dates})`,
+        greeting: (name) => `Dear ${name},`,
+        thanks: `Thank you for your request at ${HOTEL.name}. We have received it.`,
+        notConfirmed:
+            'This is not yet a confirmation of your reservation. We will check availability and get back to you as soon as possible.',
+        heading: 'Your request',
+        checkin: 'Arrival',
+        checkout: 'Departure',
+        nights: 'Number of nights',
+        guests: 'Number of people',
+        room: 'Room type',
+        questions: `Questions or changes? Reply to this e-mail or call us on ${HOTEL.phone}.`,
+        regards: 'Kind regards,',
+    },
+    de: {
+        name: 'Duits',
+        dateLocale: 'de-DE',
+        subject: (dates) => `Ihre Anfrage im ${HOTEL.name} (${dates})`,
+        greeting: (name) => `Guten Tag ${name},`,
+        thanks: `Vielen Dank für Ihre Anfrage im ${HOTEL.name}. Wir haben sie gut erhalten.`,
+        notConfirmed:
+            'Dies ist noch keine Bestätigung Ihrer Reservierung. Wir prüfen die Verfügbarkeit und melden uns so schnell wie möglich bei Ihnen.',
+        heading: 'Ihre Anfrage',
+        checkin: 'Anreise',
+        checkout: 'Abreise',
+        nights: 'Anzahl Nächte',
+        guests: 'Anzahl Personen',
+        room: 'Zimmertyp',
+        questions: `Fragen oder Änderungen? Antworten Sie auf diese E-Mail oder rufen Sie uns an unter ${HOTEL.phone}.`,
+        regards: 'Mit freundlichen Grüßen,',
+    },
+};
+
+// Onbekende of ontbrekende taal: dan het Nederlands
+function language(code) {
+    return LANGUAGES[code] ?? LANGUAGES.nl;
+}
+
 export default {
     async fetch(request, env) {
         const allowedOrigins = env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim());
@@ -123,6 +202,8 @@ function validate(input) {
         room: line(input.room, 60),
         // bv. "Type A - Comfortkamer met bad", voor de gast duidelijker dan enkel "Type A"
         roomName: line(input.roomName, 100),
+        // Taal van de website waarop de gast het formulier invulde (nl, fr, en of de)
+        lang: line(input.lang, 5),
         guests: Number(input.guests),
         remarks: String(input.remarks ?? '').trim().slice(0, 2000),
         checkin: parseDate(input.checkin),
@@ -150,9 +231,9 @@ function validate(input) {
     return { request: booking };
 }
 
-// bv. "za 26 september 2026"
-function formatDate(date) {
-    return date.toLocaleDateString('nl-BE', {
+// bv. "za 26 september 2026", in de taal van de mail
+function formatDate(date, dateLocale) {
+    return date.toLocaleDateString(dateLocale, {
         weekday: 'short',
         day: 'numeric',
         month: 'long',
@@ -162,8 +243,8 @@ function formatDate(date) {
 }
 
 // bv. "26/09", kort genoeg voor de onderwerpregel
-function formatShortDate(date) {
-    return date.toLocaleDateString('nl-BE', { day: '2-digit', month: '2-digit', timeZone: 'UTC' });
+function formatShortDate(date, dateLocale) {
+    return date.toLocaleDateString(dateLocale, { day: '2-digit', month: '2-digit', timeZone: 'UTC' });
 }
 
 // Verstuurt de aanvraag naar het hotel en een bevestiging naar de gast, over één verbinding
@@ -194,7 +275,8 @@ async function sendMails(env, booking) {
 }
 
 function hotelMail(env, booking) {
-    const dates = `${formatShortDate(booking.checkin)} - ${formatShortDate(booking.checkout)}`;
+    const guestLanguage = language(booking.lang);
+    const dates = `${formatShortDate(booking.checkin, 'nl-BE')} - ${formatShortDate(booking.checkout, 'nl-BE')}`;
 
     const text = [
         'Nieuwe verblijfsaanvraag via de website',
@@ -202,9 +284,10 @@ function hotelMail(env, booking) {
         `Naam: ${booking.name}`,
         `E-mail: ${booking.email}`,
         `Gsm-nummer: ${booking.phone || '-'}`,
+        `Taal van de gast: ${guestLanguage.name}`,
         '',
-        `Aankomst: ${formatDate(booking.checkin)}`,
-        `Vertrek: ${formatDate(booking.checkout)}`,
+        `Aankomst: ${formatDate(booking.checkin, 'nl-BE')}`,
+        `Vertrek: ${formatDate(booking.checkout, 'nl-BE')}`,
         `Aantal nachten: ${booking.nights}`,
         `Aantal personen: ${booking.guests}`,
         `Kamertype: ${booking.room}`,
@@ -214,7 +297,7 @@ function hotelMail(env, booking) {
         '',
         '--',
         'Klik op "Beantwoorden" om de gast rechtstreeks te antwoorden.',
-        'De gast kreeg automatisch een bevestiging dat de aanvraag ontvangen is.',
+        `De gast kreeg automatisch een bevestiging dat de aanvraag ontvangen is, in het ${guestLanguage.name}.`,
     ].join('\n');
 
     return {
@@ -227,28 +310,30 @@ function hotelMail(env, booking) {
     };
 }
 
+// De bevestiging aan de gast, in de taal van de website waarop hij het formulier invulde.
 // De opmerkingen staan hier bewust niet in: anders kan iemand via het formulier
 // eigen tekst laten mailen naar een vreemd adres, met het hotel als afzender
 function guestMail(env, booking) {
-    const dates = `${formatShortDate(booking.checkin)} - ${formatShortDate(booking.checkout)}`;
+    const text = language(booking.lang);
+    const dates = `${formatShortDate(booking.checkin, text.dateLocale)} - ${formatShortDate(booking.checkout, text.dateLocale)}`;
 
-    const text = [
-        `Beste ${booking.name},`,
+    const body = [
+        text.greeting(booking.name),
         '',
-        `Bedankt voor uw aanvraag bij ${HOTEL.name}. We hebben ze goed ontvangen.`,
+        text.thanks,
         '',
-        'Dit is nog geen bevestiging van uw reservatie. We controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.',
+        text.notConfirmed,
         '',
-        'Uw aanvraag',
-        `Aankomst: ${formatDate(booking.checkin)}`,
-        `Vertrek: ${formatDate(booking.checkout)}`,
-        `Aantal nachten: ${booking.nights}`,
-        `Aantal personen: ${booking.guests}`,
-        `Kamertype: ${booking.roomName || booking.room}`,
+        text.heading,
+        `${text.checkin}: ${formatDate(booking.checkin, text.dateLocale)}`,
+        `${text.checkout}: ${formatDate(booking.checkout, text.dateLocale)}`,
+        `${text.nights}: ${booking.nights}`,
+        `${text.guests}: ${booking.guests}`,
+        `${text.room}: ${booking.roomName || booking.room}`,
         '',
-        `Vragen of iets wijzigen? Beantwoord deze e-mail of bel ons op ${HOTEL.phone}.`,
+        text.questions,
         '',
-        'Met vriendelijke groeten,',
+        text.regards,
         HOTEL.name,
         HOTEL.address,
     ].join('\n');
@@ -257,7 +342,7 @@ function guestMail(env, booking) {
         from: { name: HOTEL.name, email: env.SMTP_USER },
         to: booking.email,
         reply: env.REPLY_TO,
-        subject: `Uw aanvraag bij ${HOTEL.name} (${dates})`,
-        text,
+        subject: text.subject(dates),
+        text: body,
     };
 }

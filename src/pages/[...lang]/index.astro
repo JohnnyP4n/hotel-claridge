@@ -6,38 +6,48 @@ import ExternalLink from '@lucide/astro/icons/external-link';
 import MapPin from '@lucide/astro/icons/map-pin';
 import TrainFront from '@lucide/astro/icons/train-front';
 import WavesHorizontal from '@lucide/astro/icons/waves-horizontal';
-import CtaBand from '../components/CtaBand.astro';
-import RoomCard from '../components/RoomCard.astro';
-import Layout from '../layouts/Layout.astro';
-import beach from '../assets/images/strand.jpg';
-import hotelBuilding from '../assets/images/hotel.jpeg';
-import monogram from '../assets/images/logo-bol.png';
-import happyTripBanner from '../assets/images/happytrip-banner.jpg';
-import { bookingPath, hotel } from '../data/hotel';
-import { rooms } from '../data/rooms';
-import { withBase } from '../utils/paths';
+import CtaBand from '../../components/CtaBand.astro';
+import RoomCard from '../../components/RoomCard.astro';
+import Layout from '../../layouts/Layout.astro';
+import beach from '../../assets/images/strand.jpg';
+import hotelBuilding from '../../assets/images/hotel.jpeg';
+import monogram from '../../assets/images/logo-bol.png';
+import happyTripBanner from '../../assets/images/happytrip-banner.jpg';
+import { bookingPath, hotel } from '../../data/hotel';
+import { rooms } from '../../data/rooms';
+import { localePath, localeStaticPaths, useTranslations, type Locale } from '../../i18n';
+
+// Maakt deze pagina aan in elke taal: /, /fr/, /en/ en /de/
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 
 const highlights = [
-  { icon: WavesHorizontal, title: '400 m van het strand', text: 'Zee en zand op wandelafstand' },
-  { icon: MapPin, title: 'Centraal gelegen', text: 'Rustig tussen jachthaven en station' },
-  { icon: EggFried, title: 'Vers ontbijt', text: 'Elke ochtend, met gebakken eieren en spek' },
-  { icon: TrainFront, title: 'Happy Trip', text: 'Korting op uw treinreis naar de kust' },
+  { icon: WavesHorizontal, ...t.home.highlights.beach },
+  { icon: MapPin, ...t.home.highlights.central },
+  { icon: EggFried, ...t.home.highlights.breakfast },
+  { icon: TrainFront, ...t.home.highlights.train },
 ];
 ---
 
-<Layout description="Hotel Claridge is een charmant hotel in het hart van Blankenberge, op 400 meter van het strand. Comfortabele kamers, vers ontbijt en een huiselijke sfeer.">
+<Layout locale={locale} description={t.home.description}>
   <section class="hero">
     <div class="hero-media">
       <Image src={beach} alt="" width={2400} widths={[640, 1024, 1600, 2400]} sizes="100vw" priority />
     </div>
     <div class="container hero-content">
-      <p class="eyebrow">Blankenberge &middot; Belgische kust</p>
+      <p class="eyebrow">{t.home.eyebrow}</p>
       <h1>Hotel Claridge</h1>
-      <p class="hero-lead">Charmant verblijf in het hart van Blankenberge, op slechts 400 meter van het strand.</p>
+      <p class="hero-lead">{t.home.lead}</p>
       <div class="btn-group">
-        <a href={bookingPath} class="btn btn-primary">Vraag verblijf aan</a>
+        <a href={bookingPath(locale)} class="btn btn-primary">{t.nav.book}</a>
         <a href={hotel.bookingUrl} target="_blank" rel="noopener" class="btn btn-ghost-light">
-          Boek via Booking.com <ExternalLink />
+          {t.common.bookingComShort} <ExternalLink />
         </a>
       </div>
     </div>
@@ -60,26 +70,13 @@ const highlights = [
   <section class="section" id="intro">
     <div class="container intro">
       <div class="prose">
-        <p class="eyebrow">Welkom</p>
-        <h2>Welkom bij Hotel Claridge</h2>
-        <p><strong>Hotel Claridge</strong> is een charmant hotel in het hart van Blankenberge,
-          rustig gelegen tussen de jachthaven en het station, op slechts <strong>400 meter van het strand</strong>.</p>
-
-        <p>Dankzij onze <strong>centrale ligging</strong> bereikt u vlot de zee, winkels, restaurants en bezienswaardigheden.
-          Perfect voor een ontspannen verblijf aan de Belgische kust.</p>
-
-        <p>Wij bieden <strong>comfortabele kamers, een hartelijke service en een huiselijke sfeer</strong>.
-          Ideaal voor een romantisch weekendje, familievakantie of een verfrissende break aan zee.</p>
-
-        <p>Elke ochtend verwennen wij u met een vers <strong>ontbijt</strong>, inclusief dagelijks
-          <strong>vers gebakken eieren met spek</strong> en gekookte eieren – een heerlijke start van uw dag!</p>
-
-        <p>Kom <strong>genieten</strong> van de frisse zeelucht, het zachte zand en de warme gastvrijheid van Hotel Claridge.
-          Wij kijken ernaar uit u te mogen ontvangen!</p>
+        <p class="eyebrow">{t.home.intro.eyebrow}</p>
+        <h2>{t.home.intro.title}</h2>
+        {t.home.intro.paragraphsHtml.map((paragraph) => <p set:html={paragraph} />)}
       </div>
 
       <figure class="intro-media">
-        <Image src={hotelBuilding} alt="De gevel van Hotel Claridge in Blankenberge" width={800} widths={[400, 800]} sizes="(max-width: 900px) 90vw, 440px" />
+        <Image src={hotelBuilding} alt={t.home.intro.imageAlt} width={800} widths={[400, 800]} sizes="(max-width: 900px) 90vw, 440px" />
         <Image src={monogram} alt="" width={96} densities={[1, 2]} class="monogram" />
       </figure>
     </div>
@@ -89,14 +86,14 @@ const highlights = [
     <div class="container">
       <div class="rooms-head">
         <div class="section-head">
-          <p class="eyebrow">Kamers</p>
-          <h2>Onze kamers</h2>
-          <p>Comfortkamers, een standaardkamer en een familiekamer voor 4 personen. Het ontbijt is altijd inbegrepen.</p>
+          <p class="eyebrow">{t.home.rooms.eyebrow}</p>
+          <h2>{t.home.rooms.title}</h2>
+          <p>{t.home.rooms.text}</p>
         </div>
-        <a href={withBase('/kamers/')} class="link-arrow">Alle kamers bekijken <ArrowRight /></a>
+        <a href={localePath(locale, '/kamers/')} class="link-arrow">{t.home.rooms.link} <ArrowRight /></a>
       </div>
       <div class="rooms-grid">
-        {rooms.map((room) => <RoomCard room={room} variant="compact" />)}
+        {rooms.map((room) => <RoomCard locale={locale} room={room} variant="compact" />)}
       </div>
     </div>
   </section>
@@ -104,26 +101,23 @@ const highlights = [
   <section class="section" id="happytrip">
     <div class="container">
       <div class="happytrip card">
-        <Image src={happyTripBanner} alt="Happy Trip voordeel" class="happytrip-img" />
+        <Image src={happyTripBanner} alt={t.home.happytrip.imageAlt} class="happytrip-img" />
         <div class="happytrip-text">
           <div>
-            <p class="eyebrow">Met de trein naar zee</p>
-            <h2>Happy Trip voordeel voor onze gasten</h2>
+            <p class="eyebrow">{t.home.happytrip.eyebrow}</p>
+            <h2>{t.home.happytrip.title}</h2>
           </div>
           <div>
-            <p>
-              Boek rechtstreeks bij ons en ontvang <strong>kortingscodes</strong> voor je treinreis naar de kust!<br />
-              Slechts € 14 heen en terug, vanuit élk Belgisch station. Geen parkeerstress. Geen extra kosten.
-            </p>
-            <p><strong>Vraag je Happy Trip-korting aan bij je boeking!</strong></p>
-            <a href={bookingPath} class="btn btn-primary">Vraag verblijf aan</a>
+            <p set:html={t.home.happytrip.textHtml} />
+            <p><strong>{t.home.happytrip.callToAction}</strong></p>
+            <a href={bookingPath(locale)} class="btn btn-primary">{t.nav.book}</a>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <CtaBand />
+  <CtaBand locale={locale} />
 </Layout>
 
 <style>

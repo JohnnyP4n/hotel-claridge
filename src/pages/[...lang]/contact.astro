@@ -3,49 +3,57 @@ import Mail from '@lucide/astro/icons/mail';
 import MapPin from '@lucide/astro/icons/map-pin';
 import Smartphone from '@lucide/astro/icons/smartphone';
 import TrainFront from '@lucide/astro/icons/train-front';
-import PageHeader from '../components/PageHeader.astro';
-import Layout from '../layouts/Layout.astro';
-import headerImage from '../assets/images/pier.jpg';
-import { hotel } from '../data/hotel';
+import PageHeader from '../../components/PageHeader.astro';
+import Layout from '../../layouts/Layout.astro';
+import headerImage from '../../assets/images/pier.jpg';
+import { hotel } from '../../data/hotel';
+import { localeStaticPaths, useTranslations, type Locale } from '../../i18n';
+
+// Maakt deze pagina aan in elke taal: /contact/, /fr/contact/, /en/contact/ en /de/contact/
+export const getStaticPaths = localeStaticPaths;
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
-<Layout
-  title="Contact"
-  description="Contacteer Hotel Claridge, de Limburg Stirumstraat 2, 8370 Blankenberge. Bel +32 476 68 88 88 of stuur ons een e-mail."
->
+<Layout locale={locale} title={t.contact.title} description={t.contact.description}>
   <PageHeader
-    eyebrow="Contact"
-    title="Contacteer ons"
-    intro="Een vraag over uw verblijf? Wij helpen u graag verder."
+    eyebrow={t.contact.eyebrow}
+    title={t.contact.heading}
+    intro={t.contact.intro}
     image={headerImage}
   />
 
   <section class="section" id="contact">
     <div class="container contact-grid">
       <div class="details">
-        <h2>Contactgegevens</h2>
+        <h2>{t.contact.details}</h2>
         <ul class="contact-list">
           <li>
             <span class="icon"><MapPin size={20} /></span>
             <div>
-              <strong>Adres</strong>
+              <strong>{t.contact.address}</strong>
               <a href={hotel.mapsUrl} target="_blank" rel="noopener">
                 {hotel.name}<br />{hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}
-                <span class="sr-only">(opent in Google Maps)</span>
+                <span class="sr-only">{t.common.mapsHint}</span>
               </a>
             </div>
           </li>
           <li>
             <span class="icon"><Smartphone size={20} /></span>
             <div>
-              <strong>Gsm</strong>
+              <strong>{t.contact.mobile}</strong>
               <a href={hotel.mobile.href}>{hotel.mobile.label}</a>
             </div>
           </li>
           <li>
             <span class="icon"><Mail size={20} /></span>
             <div>
-              <strong>E-mail</strong>
+              <strong>{t.contact.email}</strong>
               {hotel.emails.map((email) => <a href={`mailto:${email}`}>{email}</a>)}
             </div>
           </li>
@@ -53,26 +61,26 @@ import { hotel } from '../data/hotel';
 
         <p class="happytrip-note">
           <TrainFront size={22} />
-          <span>Ben je van plan met de trein te komen? Laat het ons weten bij je reservatie en ontvang een <strong>Happy Trip kortingscode</strong> voor je reis!</span>
+          <span set:html={t.contact.happytripNoteHtml} />
         </p>
       </div>
 
       <div class="form-card card">
-        <h2>Stuur ons een bericht</h2>
+        <h2>{t.contact.form.title}</h2>
         <form id="contact-form">
           <div class="field">
-            <label for="contact-name">Naam</label>
+            <label for="contact-name">{t.contact.form.name}</label>
             <input type="text" id="contact-name" autocomplete="name" required />
           </div>
           <div class="field">
-            <label for="contact-email">E-mail</label>
+            <label for="contact-email">{t.contact.form.email}</label>
             <input type="email" id="contact-email" autocomplete="email" required />
           </div>
           <div class="field">
-            <label for="contact-message">Bericht</label>
+            <label for="contact-message">{t.contact.form.message}</label>
             <textarea id="contact-message" required></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Verstuur</button>
+          <button type="submit" class="btn btn-primary">{t.contact.form.send}</button>
         </form>
       </div>
     </div>
@@ -81,7 +89,7 @@ import { hotel } from '../data/hotel';
       <div class="map card">
         <iframe
           src={hotel.mapEmbedUrl}
-          title="Ligging van Hotel Claridge op Google Maps"
+          title={t.contact.mapTitle}
           allowfullscreen=""
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"

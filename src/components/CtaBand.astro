@@ -3,16 +3,14 @@ import { Image } from 'astro:assets';
 import Phone from '@lucide/astro/icons/phone';
 import pier from '../assets/images/pier.jpg';
 import { bookingPath, hotel } from '../data/hotel';
+import { useTranslations, type Locale } from '../i18n';
 
 interface Props {
-  title?: string;
-  text?: string;
+  locale: Locale;
 }
 
-const {
-  title = 'Klaar voor een verblijf aan zee?',
-  text = 'Vraag rechtstreeks uw verblijf aan. Wij controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op.',
-} = Astro.props;
+const { locale } = Astro.props;
+const t = useTranslations(locale);
 ---
 
 <section class="cta">
@@ -22,10 +20,10 @@ const {
         <Image src={pier} alt="" width={1600} widths={[640, 1024, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" />
       </div>
       <div class="content">
-        <h2>{title}</h2>
-        <p>{text}</p>
+        <h2>{t.cta.title}</h2>
+        <p>{t.cta.text}</p>
         <div class="btn-group">
-          <a href={bookingPath} class="btn btn-light">Vraag verblijf aan</a>
+          <a href={bookingPath(locale)} class="btn btn-light">{t.nav.book}</a>
           <a href={hotel.mobile.href} class="btn btn-ghost-light"><Phone /> {hotel.mobile.label}</a>
         </div>
       </div>

@@ -6,28 +6,35 @@ import MapPin from '@lucide/astro/icons/map-pin';
 import Smartphone from '@lucide/astro/icons/smartphone';
 import logo from '../assets/images/logo-transparant.png';
 import { bookingPath, hotel, mainNav } from '../data/hotel';
-import { withBase } from '../utils/paths';
+import { localePath, useTranslations, type Locale } from '../i18n';
 
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const nav = mainNav(locale);
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
   <div class="container columns">
     <div class="about">
-      <a href={withBase('/')} class="brand">
+      <a href={localePath(locale, '/')} class="brand">
         <Image src={logo} alt="Hotel Claridge" width={150} densities={[1, 2]} />
       </a>
-      <p>Charmant hotel in het hart van Blankenberge, op slechts 400 meter van het strand.</p>
+      <p>{t.footer.tagline}</p>
     </div>
 
     <div>
-      <h2>Contact</h2>
+      <h2>{t.footer.contact}</h2>
       <ul class="contact-list">
         <li>
           <MapPin size={18} />
           <a href={hotel.mapsUrl} target="_blank" rel="noopener">
             {hotel.address.street}<br />{hotel.address.postalCode} {hotel.address.city}
-            <span class="sr-only">(opent in Google Maps)</span>
+            <span class="sr-only">{t.common.mapsHint}</span>
           </a>
         </li>
         <li>
@@ -44,27 +51,27 @@ const year = new Date().getFullYear();
     </div>
 
     <div>
-      <h2>Menu</h2>
+      <h2>{t.footer.menu}</h2>
       <ul class="link-list">
-        {mainNav.map(({ href, label }) => <li><a href={href}>{label}</a></li>)}
-        <li><a href={bookingPath}>Vraag verblijf aan</a></li>
+        {nav.map(({ href, label }) => <li><a href={href}>{label}</a></li>)}
+        <li><a href={bookingPath(locale)}>{t.nav.book}</a></li>
       </ul>
     </div>
 
     <div>
-      <h2>Rechtstreeks boeken</h2>
-      <p>Boek rechtstreeks bij ons en ontvang het Happy Trip-voordeel voor uw treinreis naar de kust.</p>
+      <h2>{t.footer.direct}</h2>
+      <p>{t.footer.directText}</p>
       <div class="actions">
-        <a href={bookingPath} class="btn btn-light">Vraag verblijf aan</a>
+        <a href={bookingPath(locale)} class="btn btn-light">{t.nav.book}</a>
         <a href={hotel.bookingUrl} class="external" target="_blank" rel="noopener">
-          Of boek via Booking.com <ExternalLink size={15} />
+          {t.common.bookingCom} <ExternalLink size={15} />
         </a>
       </div>
     </div>
   </div>
 
   <div class="container bottom">
-    <p>&copy; {year} Hotel Claridge &middot; Alle rechten voorbehouden</p>
+    <p>&copy; {year} Hotel Claridge &middot; {t.footer.rights}</p>
   </div>
 </footer>
 

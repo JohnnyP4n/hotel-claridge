@@ -2,22 +2,35 @@
 import { Font } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { defaultLocale, localeLinks, useTranslations, type Locale } from '../i18n';
 import { withBase } from '../utils/paths';
 import '../styles/global.css';
 
 interface Props {
-  /** Paginatitel; zonder titel toont het tabblad enkel "Hotel Claridge" */
+  /** Taal van de pagina; elke pagina krijgt die van getStaticPaths() */
+  locale: Locale;
+  /** Paginatitel; zonder titel toont het tabblad de titel van de homepagina */
   title?: string;
   /** Korte omschrijving voor zoekmachines */
   description: string;
 }
 
-const { title, description } = Astro.props;
-const pageTitle = title ? `${title} | Hotel Claridge` : 'Hotel Claridge | Charmant hotel in Blankenberge';
+const { locale, title, description } = Astro.props;
+const t = useTranslations(locale);
+const pageTitle = title ? `${title} | ${t.siteName}` : t.homeTitle;
+
+// Volledige adressen van deze pagina in elke taal. Zo weet Google dat het om vertalingen
+// van dezelfde pagina gaat (hreflang) en welk adres het origineel is (canonical).
+const alternates = localeLinks(Astro.url).map((link) => ({
+  ...link,
+  url: new URL(link.href, Astro.site).href,
+}));
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const defaultUrl = alternates.find((link) => link.locale === defaultLocale)?.url;
 ---
 
 <!DOCTYPE html>
-<html lang="nl">
+<html lang={locale}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,15 +38,18 @@ const pageTitle = title ? `${title} | Hotel Claridge` : 'Hotel Claridge | Charma
   <meta name="description" content={description} />
   <meta name="theme-color" content="#245552" />
   <link rel="icon" href={withBase('/favicon.ico')} type="image/x-icon" />
+  <link rel="canonical" href={canonical} />
+  {alternates.map((link) => <link rel="alternate" hreflang={link.locale} href={link.url} />)}
+  <link rel="alternate" hreflang="x-default" href={defaultUrl} />
   <Font cssVariable="--font-serif" preload />
   <Font cssVariable="--font-sans" preload />
 </head>
 <body>
-  <a class="skip-link" href="#inhoud">Naar de inhoud</a>
-  <Header />
+  <a class="skip-link" href="#inhoud">{t.skipLink}</a>
+  <Header locale={locale} />
   <main id="inhoud">
     <slot />
   </main>
-  <Footer />
+  <Footer locale={locale} />
 </body>
 </html>
