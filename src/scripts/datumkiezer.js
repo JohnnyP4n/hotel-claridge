@@ -2,7 +2,8 @@
 // De gast kan de datum intypen of ze in de kalender aanklikken; allebei houden ze hetzelfde
 // bij. Eén kalender bedient de twee velden: wie een aankomstdatum kiest, kiest daarna meteen
 // de vertrekdatum. Datums voor vandaag zijn niet te kiezen, en de vertrekdatum ligt altijd
-// minstens één nacht na de aankomst. De gekozen datums komen als JJJJ-MM-DD in de verborgen
+// minstens één nacht na de aankomst. Nachten die het hotel via /admin/ afsloot (gesloten of
+// volgeboekt) vallen er ook uit. De gekozen datums komen als JJJJ-MM-DD in de verborgen
 // velden checkin en checkout terecht, waar src/scripts/boeking.js ze uitleest.
 
 const dateRange = document.querySelector('[data-date-range]');
@@ -187,6 +188,8 @@ let month = startOfMonth(today);
 let hovered = null;
 /** De dag die de pijltjestoetsen verplaatsen */
 let focusDay = today;
+/** Periodes waarin het hotel geen gasten kan ontvangen; komt binnen via instellingen.js */
+let closedRanges = [];
 
 /** De vroegste dag die voor dit veld te kiezen is: vandaag, of de dag na de aankomst */
 function earliestFor(name) {
@@ -195,6 +198,29 @@ function earliestFor(name) {
 
 function earliestDay() {
     return earliestFor(mode);
+}
+
+/** Valt deze nacht in een periode die het hotel afsloot? */
+function isClosed(date) {
+    return closedRanges.some((range) => date >= range.from && date <= range.to);
+}
+
+/**
+ * De laatste vertrekdatum die na deze aankomst nog kan. Vertrekken op de eerste afgesloten
+ * dag mag: die nacht slaapt de gast er niet meer. Verder dan die dag kan niet.
+ */
+function lastCheckout() {
+    let latest = lastDay;
+    for (const range of closedRanges) {
+        if (range.from > checkin && range.from < latest) latest = range.from;
+    }
+    return latest;
+}
+
+/** Kan deze datum voor dit veld? Zonder aankomst gelden de regels van de aankomst. */
+function isAvailableFor(name, date) {
+    if (name === 'checkout' && checkin) return date <= lastCheckout();
+    return !isClosed(date);
 }
 
 /** Houdt een datum binnen wat te kiezen valt */
@@ -297,9 +323,18 @@ function dayButton(date) {
     button.textContent = date.getDate();
     button.dataset.date = toInputDate(date);
     button.setAttribute('aria-label', fullDate.format(date));
-    button.disabled = date < earliestDay() || date > lastDay;
+    button.disabled = date < earliestDay() || date > lastDay || !isAvailableFor(mode, date);
     button.tabIndex = sameDay(date, focusDay) && !button.disabled ? 0 : -1;
     if (sameDay(date, today)) button.classList.add('is-today');
+
+    // Een dag die het hotel afsloot, krijgt een streep en zegt waarom; een dag die enkel
+    // te vroeg of te laat is, blijft gewoon grijs
+    if (button.disabled && isClosed(date)) {
+        button.classList.add('is-closed');
+        button.title = texts.unavailable;
+        button.setAttribute('aria-label', `${fullDate.format(date)} - ${texts.unavailable}`);
+    }
+
     return button;
 }
 
@@ -361,7 +396,9 @@ function showError(name, show) {
 function setDate(name, date) {
     if (name === 'checkin') {
         checkin = date;
-        if (date && checkout && checkout <= date) checkout = null;
+        // Een vertrekdatum die niet meer na de aankomst ligt, of die nu over een afgesloten
+        // periode heen zou lopen, vervalt
+        if (date && checkout && (checkout <= date || checkout > lastCheckout())) checkout = null;
     } else {
         checkout = date;
     }
@@ -460,7 +497,8 @@ function onTyped(name) {
 
     const typed = input.value.trim();
     const date = typed ? parseTyped(typed) : null;
-    const usable = Boolean(date) && date >= earliestFor(name) && date <= lastDay;
+    const usable =
+        Boolean(date) && date >= earliestFor(name) && date <= lastDay && isAvailableFor(name, date);
 
     showError(name, Boolean(typed) && !usable);
     setDate(name, usable ? date : null);
@@ -591,6 +629,25 @@ dateRange.addEventListener('focusout', function() {
     setTimeout(function() {
         if (!dateRange.contains(document.activeElement)) closeCalendar(false);
     });
+});
+
+// Het hotel kan via /admin/ periodes afsluiten. src/scripts/instellingen.js haalt ze bij
+// Cloudflare op en stuurt ze hierheen zodra ze binnen zijn, een ogenblik na het laden.
+// Blijven ze uit, dan staat de kalender gewoon open en weigert het script bij Cloudflare
+// een aanvraag op die datums alsnog.
+document.addEventListener('claridge-periodes', function(e) {
+    closedRanges = (e.detail ?? [])
+        .filter((periode) => periode?.van && periode?.tot)
+        .map((periode) => ({ from: fromInputDate(periode.van), to: fromInputDate(periode.tot) }));
+
+    // Een datum die intussen al gekozen werd, kan nu afgesloten zijn
+    for (const name of names) {
+        const gekozen = name === 'checkin' ? checkin : checkout;
+        if (gekozen && !isAvailableFor(name, gekozen)) setDate(name, null);
+    }
+
+    showChoice();
+    if (!calendar.hidden) renderMonth();
 });
 
 fillWeekdays();

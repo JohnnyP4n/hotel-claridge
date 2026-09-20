@@ -33,6 +33,8 @@ export const de: Translation = {
   notice: {
     closed: 'Wir sind vom {van} bis einschließlich {tot} geschlossen.',
     closedOneDay: 'Wir sind am {van} geschlossen.',
+    fullyBooked: 'Wir sind vom {van} bis einschließlich {tot} ausgebucht.',
+    fullyBookedOneDay: 'Wir sind am {van} ausgebucht.',
   },
 
   footer: {
@@ -225,6 +227,7 @@ export const de: Translation = {
     datesMissing: 'Bitte geben Sie sowohl ein Anreise- als auch ein Abreisedatum an.',
     datePattern: 'tt.mm.jjjj',
     dateInvalid: 'Dieses Datum ist nicht möglich.',
+    unavailable: 'Nicht verfügbar',
     openCalendar: 'Kalender öffnen',
     calendarLabel: 'Wählen Sie Ihr An- und Abreisedatum',
     previousMonth: 'Voriger Monat',

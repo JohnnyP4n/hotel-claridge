@@ -38,6 +38,8 @@ export const nl = {
   notice: {
     closed: 'Wij zijn gesloten van {van} tot en met {tot}.',
     closedOneDay: 'Wij zijn gesloten op {van}.',
+    fullyBooked: 'Wij zijn volgeboekt van {van} tot en met {tot}.',
+    fullyBookedOneDay: 'Wij zijn volgeboekt op {van}.',
   },
 
   footer: {
@@ -234,6 +236,7 @@ export const nl = {
     // datum komt te staan; het teken ertussen wordt ook gebruikt bij het intypen.
     datePattern: 'dd-mm-jjjj',
     dateInvalid: 'Deze datum kan niet gekozen worden.',
+    unavailable: 'Niet beschikbaar',
     openCalendar: 'Kalender openen',
     calendarLabel: 'Kies uw aankomst- en vertrekdatum',
     previousMonth: 'Vorige maand',

@@ -1,6 +1,7 @@
 // Bewaart de instellingen die het hotel zelf aanpast via de adminpagina (/admin/ op de
-// site): de prijzen, de sluitingsperiodes en of de 3 + 1 actie getoond wordt. Ze staan in
-// Cloudflare KV, zodat een wijziging meteen zichtbaar is zonder de site opnieuw te bouwen.
+// site): de prijzen, de periodes waarin het hotel niet beschikbaar is, en of de 3 + 1 actie
+// getoond wordt. Ze staan in Cloudflare KV, zodat een wijziging meteen zichtbaar is zonder
+// de site opnieuw te bouwen.
 //
 // De site zelf leest ze met GET /instellingen. Staat er niets in KV (of is Cloudflare even
 // onbereikbaar), dan blijven de prijzen staan die bij het bouwen in de pagina's zaten:
@@ -14,6 +15,8 @@ const KV_SLEUTEL = 'instellingen';
 const GELDIGHEID_MS = 12 * 60 * 60 * 1000;
 
 const MAX_SLUITINGEN = 12;
+/** Waarom een periode niet aan te vragen is; iets anders wordt 'gesloten' */
+const REDENEN = ['gesloten', 'volgeboekt'];
 const MAX_TEKST = 200;
 /** Hoogste prijs die aanvaard wordt, tegen een tikfout van een nul te veel */
 const MAX_PRIJS = 5000;
@@ -31,6 +34,11 @@ export async function handleInstellingen(request, env, cors, pad) {
         return bewaar(request, env, cors);
     }
     return null;
+}
+
+/** De bewaarde instellingen als object, voor aanvraag.js; leeg als er nog niets bewaard is */
+export async function bewaardeInstellingen(env) {
+    return (await env.INSTELLINGEN.get(KV_SLEUTEL, { type: 'json' })) ?? {};
 }
 
 // De instellingen zoals ze nu zijn. Nog nooit iets bewaard: dan een leeg object, en
@@ -136,6 +144,7 @@ function controleer(ingevuld) {
         sluitingen.push({
             van,
             tot,
+            reden: REDENEN.includes(sluiting?.reden) ? sluiting.reden : 'gesloten',
             actief: sluiting.actief !== false,
             tekst: String(sluiting?.tekst ?? '').replace(/\s+/g, ' ').trim().slice(0, MAX_TEKST),
         });

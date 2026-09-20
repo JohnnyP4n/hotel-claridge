@@ -167,10 +167,12 @@ const bedden = extraBeds
       </section>
 
       <section class="card admin-kaart">
-        <h2>Gesloten periodes</h2>
+        <h2>Periodes niet beschikbaar</h2>
         <p class="admin-uitleg">
-          Bovenaan elke pagina verschijnt dan "Wij zijn gesloten van ... tot en met ...", in
-          de taal van de bezoeker. De melding verdwijnt vanzelf na de laatste dag.
+          Deze nachten zijn niet meer te kiezen in het aanvraagformulier op /boeking/. Wie
+          vertrekt op de eerste dag van een periode, kan die aanvraag nog wel doen: die nacht
+          slaapt hij er niet meer. Met "Melding tonen" verschijnt er bovendien bovenaan elke
+          pagina een regel in de taal van de bezoeker. Alles verdwijnt vanzelf na de laatste dag.
         </p>
         <ul class="admin-periodes" id="periodes"></ul>
         <p class="admin-leeg" id="geen-periodes">Nog geen periode ingesteld.</p>
@@ -185,7 +187,7 @@ const bedden = extraBeds
     </form>
   </main>
 
-  <!-- Eén gesloten periode; src/scripts/admin.js maakt hier een kopie van per periode.
+  <!-- Eén periode; src/scripts/admin.js maakt hier een kopie van per periode.
        De invoervelden zitten in hun label, zodat een kopie geen dubbele id's krijgt. -->
   <template id="periode-sjabloon">
     <li class="admin-periode">
@@ -197,13 +199,20 @@ const bedden = extraBeds
         <span>Tot en met</span>
         <input type="date" data-veld="tot" required />
       </label>
+      <label class="field">
+        <span>Reden</span>
+        <select data-veld="reden">
+          <option value="gesloten">Gesloten</option>
+          <option value="volgeboekt">Volgeboekt</option>
+        </select>
+      </label>
       <label class="field admin-periode-tekst">
-        <span>Eigen tekst <small>(optioneel)</small></span>
+        <span>Eigen tekst bij de melding <small>(optioneel)</small></span>
         <input type="text" data-veld="tekst" maxlength="200" placeholder="bv. Aanvragen blijven welkom" />
       </label>
       <label class="admin-schakelaar">
         <input type="checkbox" data-veld="actief" />
-        <span>Tonen</span>
+        <span>Melding tonen</span>
       </label>
       <button type="button" class="admin-verwijder" data-verwijder>Verwijderen</button>
     </li>
@@ -365,7 +374,7 @@ const bedden = extraBeds
 
   .admin-periode {
     display: grid;
-    grid-template-columns: 1fr 1fr auto auto;
+    grid-template-columns: 1fr 1fr 1fr auto auto;
     gap: 1rem;
     align-items: end;
     padding: 1.25rem;

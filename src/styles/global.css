@@ -626,6 +626,13 @@ legend + * {
   cursor: default;
 }
 
+/* Nachten die het hotel via /admin/ afsloot: gesloten of volgeboekt */
+.calendar-day.is-closed {
+  color: color-mix(in srgb, var(--color-muted), #fff 40%);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
 .calendar-day.is-today {
   color: var(--color-accent);
   font-weight: 700;

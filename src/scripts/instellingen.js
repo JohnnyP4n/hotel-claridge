@@ -1,5 +1,7 @@
-// Haalt op wat het hotel via /admin/ instelde en past het toe op de pagina: de prijzen,
-// de melding bovenaan als het hotel gesloten is, en of het 3 + 1 actieblok getoond wordt.
+// Haalt op wat het hotel via /admin/ instelde en past het toe op de pagina: de prijzen, de
+// melding bovenaan als het hotel niet beschikbaar is, en of het 3 + 1 actieblok getoond
+// wordt. De periodes gaan ook naar de kalender van het aanvraagformulier, die er de dagen
+// mee afsluit (src/scripts/datumkiezer.js).
 //
 // De pagina is ook zonder dit script volledig juist: ze werd gebouwd met de waarden uit
 // src/data/. Dit script verandert enkel wat het hotel sindsdien aanpaste. Lukt het ophalen
@@ -21,6 +23,7 @@ async function haalOp() {
         toonPrijzen(instellingen);
         toonPromo(instellingen);
         toonMelding(instellingen);
+        meldPeriodes(instellingen);
     } catch (fout) {
         // Niets aan de hand voor de bezoeker: hij ziet de prijzen waarmee de site gebouwd is
         console.warn('Instellingen niet opgehaald:', fout);
@@ -66,6 +69,20 @@ function toonPromo(instellingen) {
 
 
 /* ================================
+   Periodes doorgeven aan het aanvraagformulier
+================================= */
+
+// De kalender op /boeking/ luistert hiernaar en sluit die dagen af. Komt dit bericht er
+// niet (geen boekingspagina, of Cloudflare onbereikbaar), dan blijft de kalender gewoon
+// open staan en vangt het script bij Cloudflare de aanvraag alsnog op.
+function meldPeriodes(instellingen) {
+    document.dispatchEvent(
+        new CustomEvent('claridge-periodes', { detail: instellingen.sluitingen ?? [] }),
+    );
+}
+
+
+/* ================================
    Melding bovenaan
 ================================= */
 
@@ -99,10 +116,15 @@ function vandaag() {
 }
 
 function regel(sluiting) {
-    const zin =
-        sluiting.van === sluiting.tot
-            ? teksten.geslotenEenDag.replace('{van}', datum(sluiting.van))
-            : teksten.gesloten.replace('{van}', datum(sluiting.van)).replace('{tot}', datum(sluiting.tot));
+    // "Wij zijn gesloten van ... tot en met ..." of "Wij zijn volgeboekt ...", en bij een
+    // periode van één dag de kortere zin
+    const volgeboekt = sluiting.reden === 'volgeboekt';
+    const eenDag = sluiting.van === sluiting.tot;
+    const sjabloon = volgeboekt
+        ? (eenDag ? teksten.volgeboektEenDag : teksten.volgeboekt)
+        : (eenDag ? teksten.geslotenEenDag : teksten.gesloten);
+
+    const zin = sjabloon.replace('{van}', datum(sluiting.van)).replace('{tot}', datum(sluiting.tot));
 
     const paragraaf = document.createElement('p');
     const vet = document.createElement('strong');

@@ -3,6 +3,7 @@
 // bevestiging, via de eigen mailbox bij Combell. Instellingen staan in wrangler.jsonc,
 // wachtwoorden als geheim bij Cloudflare (zie README.md in deze map).
 import { WorkerMailer } from 'worker-mailer';
+import { bewaardeInstellingen } from './instellingen.js';
 import { reply } from './antwoord.js';
 
 const MAX_BODY_LENGTH = 10_000;
@@ -116,6 +117,10 @@ export async function handleAanvraag(request, env, cors) {
         return reply(400, { success: false, message: error }, cors);
     }
 
+    if (await isGesloten(env, booking)) {
+        return reply(409, { success: false, message: 'Die datums zijn niet beschikbaar' }, cors);
+    }
+
     const human = await verifyTurnstile(env, input.turnstileToken, request.headers.get('CF-Connecting-IP'));
     if (!human) {
         return reply(403, { success: false, message: 'Spamcontrole mislukt' }, cors);
@@ -129,6 +134,30 @@ export async function handleAanvraag(request, env, cors) {
     }
 
     return reply(200, { success: true }, cors);
+}
+
+// Ligt er een nacht van dit verblijf in een periode die het hotel via /admin/ afsloot
+// (gesloten of volgeboekt)? De kalender op /boeking/ laat die dagen al niet kiezen; dit is
+// dezelfde controle aan deze kant, want een POST komt niet per se van dat formulier.
+async function isGesloten(env, booking) {
+    let sluitingen;
+    try {
+        sluitingen = (await bewaardeInstellingen(env)).sluitingen ?? [];
+    } catch (e) {
+        // Liever een aanvraag te veel dan een gast die niets kan versturen
+        console.error('Instellingen niet gelezen:', e);
+        return false;
+    }
+
+    // Een periode sluit nachten af. De laatste nacht van het verblijf is de dag voor het
+    // vertrek: wie vertrekt op de eerste gesloten dag, slaapt er die nacht niet meer.
+    const laatsteNacht = new Date(booking.checkout.getTime() - 24 * 60 * 60 * 1000);
+
+    return sluitingen.some((sluiting) => {
+        const van = parseDate(String(sluiting?.van ?? ''));
+        const tot = parseDate(String(sluiting?.tot ?? ''));
+        return van && tot && van <= laatsteNacht && tot >= booking.checkin;
+    });
 }
 
 // Vraagt Cloudflare of de Turnstile-controle in het formulier geslaagd is.

@@ -1,6 +1,7 @@
-// De beheerpagina op /admin/ (zie src/pages/admin.astro). Meldt aan bij het script in de
-// map worker/, toont wat daar bewaard is en stuurt de wijzigingen terug. Zolang er nog
-// niets bewaard is, staan de waarden uit src/data/ in het formulier.
+// De beheerpagina op /admin/ (zie src/pages/admin.astro): de prijzen, de 3 + 1 actie en de
+// periodes waarin het hotel niet beschikbaar is. Meldt aan bij het script in de map worker/,
+// toont wat daar bewaard is en stuurt de wijzigingen terug. Zolang er nog niets bewaard is,
+// staan de waarden uit src/data/ in het formulier.
 
 const hoofd = document.querySelector('main');
 /** Het script bij Cloudflare; de adressen eronder zijn /admin/aanmelden en /admin/instellingen */
@@ -233,6 +234,7 @@ function lees() {
         instellingen.sluitingen.push({
             van: veld(periode, 'van').value,
             tot: veld(periode, 'tot').value,
+            reden: veld(periode, 'reden').value,
             tekst: veld(periode, 'tekst').value,
             actief: veld(periode, 'actief').checked,
         });
@@ -268,14 +270,16 @@ function zetPrijzenTerug() {
 
 
 /* ================================
-   Gesloten periodes
+   Periodes waarin het hotel niet beschikbaar is
 ================================= */
 
-function voegPeriodeToe(sluiting = { van: '', tot: '', tekst: '', actief: true }) {
+function voegPeriodeToe(sluiting = { van: '', tot: '', reden: 'gesloten', tekst: '', actief: true }) {
     const periode = sjabloon.content.firstElementChild.cloneNode(true);
 
     veld(periode, 'van').value = sluiting.van ?? '';
     veld(periode, 'tot').value = sluiting.tot ?? '';
+    // Periodes van voor de reden erbij kwam, waren allemaal sluitingen
+    veld(periode, 'reden').value = sluiting.reden === 'volgeboekt' ? 'volgeboekt' : 'gesloten';
     veld(periode, 'tekst').value = sluiting.tekst ?? '';
     veld(periode, 'actief').checked = sluiting.actief !== false;
 

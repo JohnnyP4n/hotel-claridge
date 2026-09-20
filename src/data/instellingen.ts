@@ -1,5 +1,5 @@
-// Wat het hotel zelf kan aanpassen via de adminpagina (/admin/): de prijzen, de
-// sluitingsmeldingen en of de 3 + 1 actie getoond wordt.
+// Wat het hotel zelf kan aanpassen via de adminpagina (/admin/): de prijzen, de periodes
+// waarin het niet beschikbaar is, en of de 3 + 1 actie getoond wordt.
 //
 // De waarden hieronder zijn de standaard: daarmee wordt de site gebouwd, en die staat dus
 // meteen in elke pagina. Past het hotel iets aan, dan bewaart het script bij Cloudflare
@@ -13,11 +13,18 @@ export const workerUrl = 'https://hotel-claridge-aanvraag.hotelclaridge.workers.
 /** Per persoon per nacht in euro, niet inbegrepen in de kamerprijs */
 export const touristTax = 2.5;
 
-/** Eén periode waarin het hotel gesloten is; de datums zijn JJJJ-MM-DD, tot en met */
+/** Waarom het hotel in die periode geen gasten kan ontvangen */
+export type Reden = 'gesloten' | 'volgeboekt';
+
+/**
+ * Eén periode waarin het hotel niet beschikbaar is; de datums zijn JJJJ-MM-DD, tot en met.
+ * Die nachten zijn niet meer te kiezen in het aanvraagformulier op /boeking/.
+ */
 export interface Sluiting {
   van: string;
   tot: string;
-  /** Uit: de periode blijft bewaard, maar de melding verschijnt niet op de site */
+  reden: Reden;
+  /** Toont de melding bovenaan de site; de datums zijn hoe dan ook niet aan te vragen */
   actief: boolean;
   /** Vrije regel onder de melding, bv. "Aanvragen blijven welkom"; mag leeg zijn */
   tekst: string;
@@ -31,6 +38,7 @@ export interface Instellingen {
   toeristenbelasting: number;
   /** Toont het actieblok "3 + 1 nacht gratis" op de tarievenpagina */
   promo3plus1: boolean;
+  /** Periodes waarin er geen gasten kunnen; heet historisch "sluitingen" */
   sluitingen: Sluiting[];
   /** Wanneer het hotel de instellingen laatst bewaarde; ontbreekt bij de standaard */
   bijgewerkt?: string;
