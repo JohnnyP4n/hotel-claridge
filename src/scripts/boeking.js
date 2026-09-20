@@ -8,8 +8,7 @@ const sentMessage = document.getElementById('booking-sent');
 const checkMessage = document.getElementById('booking-check');
 
 // De teksten van dit script staan als data-attributen op het formulier (zie boeking.astro),
-// zodat ze in elke taal kloppen: data-lang, data-submit, data-sending, data-dates-missing
-// en data-dates-order
+// zodat ze in elke taal kloppen: data-lang, data-submit, data-sending en data-dates-missing
 const texts = bookingForm.dataset;
 
 // Kamertype vooraf kiezen als de bezoeker via "Vraag deze kamer aan" komt (bv. ?kamer=Type%20A)
@@ -23,39 +22,11 @@ function preselectRoom() {
 
 preselectRoom();
 
-// Datum als JJJJ-MM-DD in Belgische tijd (toISOString() geeft UTC, en dat is tot 2 uur 's nachts nog gisteren)
-function toInputDate(date) {
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${date.getFullYear()}-${month}-${day}`;
-}
-
-// Leest de waarde van een datumveld (JJJJ-MM-DD) als lokale datum
-function fromInputDate(value) {
-    const [year, month, day] = value.split('-').map(Number);
-    return new Date(year, month - 1, day);
-}
-
-function countNights(checkin, checkout) {
-    const msPerDay = 24 * 60 * 60 * 1000;
-    return Math.round((fromInputDate(checkout) - fromInputDate(checkin)) / msPerDay);
-}
-
-function setMinimumDates() {
-    checkinInput.min = toInputDate(new Date());
-    checkoutInput.min = '';
-    checkoutInput.value = '';
-}
-
+// De kalender (src/scripts/datumkiezer.js) laat geen datum in het verleden toe en houdt de
+// vertrekdatum altijd na de aankomst. Hier blijft alleen over: staan ze allebei ingevuld?
 function validateDates() {
     if (!checkinInput.value || !checkoutInput.value) {
         alert(texts.datesMissing);
-        return false;
-    }
-
-    if (countNights(checkinInput.value, checkoutInput.value) < 1) {
-        alert(texts.datesOrder);
-        checkoutInput.value = '';
         return false;
     }
 
@@ -128,14 +99,3 @@ bookingForm.addEventListener('submit', function(e) {
         sendRequest(bookingForm);
     }
 });
-
-checkinInput.addEventListener('change', function() {
-    if (checkinInput.value) {
-        const checkinDate = fromInputDate(checkinInput.value);
-        checkinDate.setDate(checkinDate.getDate() + 1);
-        checkoutInput.min = toInputDate(checkinDate);
-        checkoutInput.value = '';
-    }
-});
-
-document.addEventListener('DOMContentLoaded', setMinimumDates);

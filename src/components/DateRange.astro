@@ -1,0 +1,95 @@
+---
+// De aankomst- en vertrekdatum samen. De browser toont bij <input type="date"> zijn eigen
+// kalender, en die is met CSS niet op te maken. Daarom staat hier een eigen kalender die de
+// kleuren en letters van de site volgt; de maand- en dagnamen komen wel van de browser zelf
+// (via t.dateLocale). De gast kan de datum intypen of ze in de kalender aanklikken. De
+// gekozen datums komen in twee verborgen velden terecht (checkin en checkout), zodat het
+// formulier en het script in worker/ verder onveranderd blijven.
+import CalendarDays from '@lucide/astro/icons/calendar-days';
+import ChevronLeft from '@lucide/astro/icons/chevron-left';
+import ChevronRight from '@lucide/astro/icons/chevron-right';
+import { useTranslations, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+// De twee velden zijn identiek op hun naam na
+const dateFields = [
+  { name: 'checkin', label: t.booking.checkin },
+  { name: 'checkout', label: t.booking.checkout },
+] as const;
+---
+
+<div
+  class="date-range"
+  data-date-range
+  data-locale={t.dateLocale}
+  data-pattern={t.booking.datePattern}
+  data-pick-checkin={t.booking.pickCheckin}
+  data-pick-checkout={t.booking.pickCheckout}
+  data-night-one={t.booking.nightOne}
+  data-night-many={t.booking.nightMany}
+>
+  <div class="date-triggers">
+    {dateFields.map((field) => (
+      <div class="field date-field">
+        <label for={`${field.name}-input`}>{field.label}</label>
+        <div class="date-control">
+          <input
+            type="text"
+            id={`${field.name}-input`}
+            class="date-input"
+            data-field={field.name}
+            placeholder={t.booking.datePattern}
+            inputmode="numeric"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby={`${field.name}-error`}
+          />
+          <button
+            type="button"
+            class="date-open"
+            data-opens={field.name}
+            aria-label={t.booking.openCalendar}
+            aria-haspopup="dialog"
+            aria-controls="date-calendar"
+            aria-expanded="false"
+          >
+            <CalendarDays size={18} aria-hidden="true" />
+          </button>
+        </div>
+        <input type="hidden" id={field.name} name={field.name} />
+        <p class="date-error" id={`${field.name}-error`} role="alert" hidden>{t.booking.dateInvalid}</p>
+      </div>
+    ))}
+  </div>
+
+  <!-- De kalender zelf. src/scripts/datumkiezer.js vult de maanden, de jaren, de weekdagen
+       en de dagen in. -->
+  <div class="calendar" id="date-calendar" role="dialog" aria-label={t.booking.calendarLabel} hidden>
+    <div class="calendar-head">
+      <button type="button" class="calendar-nav" data-step="-1" aria-label={t.booking.previousMonth}>
+        <ChevronLeft size={20} aria-hidden="true" />
+      </button>
+      <div class="calendar-period">
+        <select class="calendar-select" data-period="month" aria-label={t.booking.monthLabel}></select>
+        <select class="calendar-select" data-period="year" aria-label={t.booking.yearLabel}></select>
+      </div>
+      <button type="button" class="calendar-nav" data-step="1" aria-label={t.booking.nextMonth}>
+        <ChevronRight size={20} aria-hidden="true" />
+      </button>
+    </div>
+
+    <div class="calendar-weekdays" aria-hidden="true"></div>
+    <div class="calendar-days"></div>
+    <p class="calendar-hint"></p>
+  </div>
+</div>
+
+<script>
+  import '../scripts/datumkiezer.js';
+</script>

@@ -397,6 +397,284 @@ legend + * {
 
 
 /* ================================
+   Datumkiezer
+   De eigen kalender bij het aanvraagformulier (src/components/DateRange.astro).
+   De opmaak staat hier en niet in de component, omdat de dagen en de maandkeuze door
+   src/scripts/datumkiezer.js gemaakt worden.
+================================= */
+
+/* De twee datumvelden schikken zich als gewone velden in het formulier */
+.date-range,
+.date-triggers {
+  display: contents;
+}
+
+.date-field {
+  position: relative;
+}
+
+/* Het kadertje om het tekstvak en de kalenderknop ziet eruit als een gewoon invulveld */
+.date-control {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.date-control:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.date-control.is-invalid {
+  border-color: var(--color-error);
+}
+
+.date-control.is-invalid:focus-within {
+  box-shadow: 0 0 0 4px var(--color-error-soft);
+}
+
+.date-field .date-input {
+  min-height: 46px;
+  padding-right: 0;
+  background-color: transparent;
+  border: 0;
+  font-variant-numeric: lining-nums;
+}
+
+.date-field .date-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.date-open {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  width: 44px;
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.date-open:hover {
+  background-color: var(--color-primary-soft);
+}
+
+.date-error {
+  color: var(--color-error);
+  font-size: 0.88rem;
+}
+
+/* De kalender hangt onder het veld waar de gast mee bezig is, en dus ook onder een
+   foutmelding als die er staat */
+.calendar {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.6rem);
+  left: 0;
+  width: 21rem;
+  padding: 1.1rem;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  animation: calendar-open 0.16s ease-out;
+}
+
+/* Bij de vertrekdatum: rechts uitlijnen, anders loopt de kalender buiten het formulier */
+.calendar.to-the-right {
+  left: auto;
+  right: 0;
+}
+
+/* Staan de velden onder elkaar, dan is de kalender even breed als het veld */
+@media (max-width: 560px) {
+  .calendar {
+    width: 100%;
+  }
+}
+
+@keyframes calendar-open {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.calendar-period {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+/* De maand- en jaarkeuze: gewone keuzelijsten, maar opgemaakt als de titel die ze vervangen.
+   Het pijltje is een chevron van Lucide, in de kleur van de kopteksten (--color-heading). */
+.calendar-select {
+  width: auto;
+  min-height: 0;
+  padding: 0.2rem 1.35rem 0.2rem 0.45rem;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%231b2624' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.35rem center;
+  background-size: 13px;
+  color: var(--color-heading);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+  text-transform: capitalize;
+  appearance: none;
+  cursor: pointer;
+}
+
+.calendar-select:hover,
+.calendar-select:focus {
+  background-color: var(--color-sand);
+}
+
+.calendar-select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.calendar-select:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.calendar-nav {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.calendar-nav:hover:not(:disabled) {
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary-soft);
+}
+
+.calendar-nav:disabled {
+  color: var(--color-line);
+  cursor: default;
+}
+
+.calendar-weekdays,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-weekdays {
+  margin-bottom: 0.4rem;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.calendar-day {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  padding: 0;
+  background-color: transparent;
+  color: var(--color-text);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.95rem;
+  font-variant-numeric: lining-nums;
+  cursor: pointer;
+}
+
+.calendar-day:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Dagen uit het verleden: nog leesbaar, maar duidelijk niet te kiezen */
+.calendar-day:disabled {
+  color: color-mix(in srgb, var(--color-muted), #fff 55%);
+  cursor: default;
+}
+
+.calendar-day.is-today {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+/* De nachten tussen aankomst en vertrek; zonder tussenruimte vormen ze één balk */
+.calendar-day.is-between {
+  background-color: var(--color-primary-soft);
+  border-radius: 0;
+}
+
+.calendar-day.is-start,
+.calendar-day.is-end {
+  background-color: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Met een verblijf van meerdere nachten ronden de uiteinden alleen naar buiten af */
+.has-range .is-start {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+
+.has-range .is-end {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* Alleen dagen buiten het gekozen verblijf lichten op onder de muis */
+.calendar-day:not(:disabled, .is-start, .is-end, .is-between):hover {
+  background-color: var(--color-sand);
+}
+
+.calendar-hint {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-line);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar {
+    animation: none;
+  }
+}
+
+
+/* ================================
    Melding bovenaan de site
    Wordt gevuld door src/scripts/instellingen.js met wat het hotel
    via /admin/ instelde, bv. een sluitingsperiode.

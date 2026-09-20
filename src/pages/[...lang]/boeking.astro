@@ -5,6 +5,7 @@ import Coffee from '@lucide/astro/icons/coffee';
 import ExternalLink from '@lucide/astro/icons/external-link';
 import Phone from '@lucide/astro/icons/phone';
 import TrainFront from '@lucide/astro/icons/train-front';
+import DateRange from '../../components/DateRange.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Layout from '../../layouts/Layout.astro';
 import headerImage from '../../assets/images/strand.jpg';
@@ -56,7 +57,6 @@ const turnstileSiteKey = '0x4AAAAAAE86cn95It_fBqiX';
         data-submit={t.booking.submit}
         data-sending={t.booking.sending}
         data-dates-missing={t.booking.datesMissing}
-        data-dates-order={t.booking.datesOrder}
       >
         <!-- Spamval: onzichtbaar voor bezoekers, spambots vinken dit aan -->
         <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -82,14 +82,7 @@ const turnstileSiteKey = '0x4AAAAAAE86cn95It_fBqiX';
         <fieldset>
           <legend>{t.booking.yourRequest}</legend>
           <div class="fields">
-            <div class="field">
-              <label for="checkin">{t.booking.checkin}</label>
-              <input type="date" id="checkin" name="checkin" required />
-            </div>
-            <div class="field">
-              <label for="checkout">{t.booking.checkout}</label>
-              <input type="date" id="checkout" name="checkout" required />
-            </div>
+            <DateRange locale={locale} />
             <div class="field">
               <label for="guests">{t.booking.guests}</label>
               <input type="number" id="guests" name="guests" min="1" max="4" required />

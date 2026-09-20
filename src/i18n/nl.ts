@@ -229,7 +229,21 @@ export const nl = {
     robotCheck: 'Vink eerst het vakje "Ik ben geen robot" hierboven aan.',
     error: 'Het versturen is niet gelukt. Probeer het opnieuw of bel ons op',
     datesMissing: 'Gelieve zowel een aankomst- als vertrekdatum in te vullen.',
-    datesOrder: 'De vertrekdatum moet minstens één dag na de aankomstdatum zijn.',
+    // De teksten van de eigen kalender (src/components/DateRange.astro).
+    // datePattern is zowel het voorbeeld in het lege veld als de vorm waarin een gekozen
+    // datum komt te staan; het teken ertussen wordt ook gebruikt bij het intypen.
+    datePattern: 'dd-mm-jjjj',
+    dateInvalid: 'Deze datum kan niet gekozen worden.',
+    openCalendar: 'Kalender openen',
+    calendarLabel: 'Kies uw aankomst- en vertrekdatum',
+    previousMonth: 'Vorige maand',
+    nextMonth: 'Volgende maand',
+    monthLabel: 'Maand',
+    yearLabel: 'Jaar',
+    pickCheckin: 'Kies uw aankomstdatum',
+    pickCheckout: 'Kies nu uw vertrekdatum',
+    nightOne: '{n} nacht',
+    nightMany: '{n} nachten',
     sent: {
       title: 'Bedankt voor uw aanvraag',
       text: 'Wij hebben uw aanvraag goed ontvangen. We controleren de beschikbaarheid en nemen zo snel mogelijk contact met u op via e-mail of telefoon.',
