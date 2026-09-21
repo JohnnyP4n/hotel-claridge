@@ -1,0 +1,5 @@
+# Zoekmachines mogen de hele site lezen, behalve de beheerpagina.
+User-agent: *
+Disallow: /admin/
+
+Sitemap: https://hotel-claridge.be/sitemap.xml
