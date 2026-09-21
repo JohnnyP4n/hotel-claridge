@@ -182,6 +182,8 @@ let checkout = null;
 let mode = 'checkin';
 /** Bij welk van de twee velden de kalender openstaat, om de aandacht erheen terug te sturen */
 let openedBy = null;
+/** Staat de kalender net te sluiten? Dan mag het tekstvak ze niet meteen weer openen */
+let closing = false;
 /** De getoonde maand */
 let month = startOfMonth(today);
 /** De dag waar de muis boven zweeft: die toont het verblijf alvast in het groen */
@@ -304,6 +306,11 @@ function renderMonth() {
         days.push(dayButton(new Date(month.getFullYear(), month.getMonth(), day)));
     }
 
+    // De dagknop die de aandacht heeft, verdwijnt bij het opnieuw tekenen. Valt de aandacht
+    // daardoor uit de kalender, dan sluit die vanzelf (zie de focusout onderaan), en dus
+    // krijgt een dag van de nieuwe maand ze hieronder terug.
+    const hadFocus = dayGrid.contains(document.activeElement);
+
     dayGrid.replaceChildren(...days);
 
     // Er moet altijd één dag met de tabtoets te bereiken zijn, ook als de dag van de
@@ -311,6 +318,14 @@ function renderMonth() {
     if (!dayGrid.querySelector('[tabindex="0"]')) {
         const first = dayGrid.querySelector('.calendar-day:not(:disabled)');
         if (first) first.tabIndex = 0;
+    }
+
+    if (hadFocus) {
+        const day = dayGrid.querySelector('[tabindex="0"]');
+        if (day) {
+            focusDay = fromInputDate(day.dataset.date);
+            day.focus();
+        }
     }
 
     paintRange();
@@ -441,7 +456,13 @@ function closeCalendar(returnFocus) {
     }
     openedBy = null;
 
-    if (returnFocus) input?.focus();
+    // De aandacht gaat terug naar het tekstvak, maar dat mag de kalender niet opnieuw
+    // openen: na de twee datums hoort ze dicht te blijven
+    if (returnFocus) {
+        closing = true;
+        input?.focus();
+        closing = false;
+    }
 }
 
 function choose(date) {
@@ -529,7 +550,7 @@ for (const name of names) {
     const { input, openButton } = fields[name];
 
     input.addEventListener('focus', function() {
-        if (openedBy !== name) openCalendar(name, false);
+        if (!closing && openedBy !== name) openCalendar(name, false);
     });
 
     input.addEventListener('input', function() {
@@ -624,10 +645,18 @@ document.addEventListener('pointerdown', function(e) {
 });
 
 dateRange.addEventListener('focusout', function() {
-    // Even wachten met oordelen: bij het bladeren door de maanden wordt de dagknop met de
-    // aandacht heel kort vervangen, en pas daarna krijgt de nieuwe knop de aandacht terug
+    // Even wachten met oordelen: de aandacht is soms een ogenblik nergens voor ze op haar
+    // nieuwe plaats aankomt
     setTimeout(function() {
-        if (!dateRange.contains(document.activeElement)) closeCalendar(false);
+        const away = document.activeElement;
+
+        // Alleen sluiten als de aandacht bij een ander element terechtkwam, bv. het volgende
+        // veld van het formulier. Valt ze op de pagina zelf terug, dan laat de browser ze
+        // vallen: Safari en de browsers op de telefoon doen dat bij elke klik op een knop,
+        // en dan zou de kalender sluiten nog voor de klik op een maandpijl aankomt. Klikken
+        // naast de kalender sluit ze hierboven al.
+        const landed = Boolean(away) && away !== document.body && away !== document.documentElement;
+        if (landed && !dateRange.contains(away)) closeCalendar(false);
     });
 });
 
