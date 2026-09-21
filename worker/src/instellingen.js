@@ -7,6 +7,8 @@
 // onbereikbaar), dan blijven de prijzen staan die bij het bouwen in de pagina's zaten:
 // die uit src/data/rooms.ts. Wat hier bewaard wordt, zijn dus enkel de afwijkingen.
 import { reply } from './antwoord.js';
+import { volgeboektePeriodes } from './beschikbaarheid.js';
+import { zelfdeTekst } from './geheim.js';
 
 /** Sleutel waaronder alles als één JSON-tekst in KV staat */
 const KV_SLEUTEL = 'instellingen';
@@ -43,10 +45,15 @@ export async function bewaardeInstellingen(env) {
 
 // De instellingen zoals ze nu zijn. Nog nooit iets bewaard: dan een leeg object, en
 // gebruikt de site de prijzen waarmee ze gebouwd is.
+//
+// Onder `volgeboekt` komen de nachten die het kassasysteem doorstuurde (beschikbaarheid.js)
+// — apart van `sluitingen`, want dat zijn de periodes die het hotel zélf instelde op
+// /admin/. Zo kan de adminpagina die lijst nooit per ongeluk mee opslaan.
 async function lees(env, cors) {
-    const bewaard = await env.INSTELLINGEN.get(KV_SLEUTEL);
+    const bewaard = (await env.INSTELLINGEN.get(KV_SLEUTEL, { type: 'json' })) ?? {};
+    const volgeboekt = await volgeboektePeriodes(env);
 
-    return new Response(bewaard ?? '{}', {
+    return new Response(JSON.stringify(volgeboekt ? { ...bewaard, volgeboekt } : bewaard), {
         headers: {
             'Content-Type': 'application/json',
             // Een minuut in de browser: een aanpassing is dus hooguit een minuut later
@@ -216,15 +223,4 @@ async function handtekening(geheim, tekst) {
     );
     const ondertekend = await crypto.subtle.sign('HMAC', sleutel, new TextEncoder().encode(tekst));
     return [...new Uint8Array(ondertekend)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
-}
-
-// Vergelijkt twee teksten zonder dat de duur van de vergelijking verraadt hoeveel tekens
-// al kloppen. Eerst versleuteld samenvatten, zodat de vergelijking altijd 32 bytes lang is.
-async function zelfdeTekst(a, b) {
-    const encoder = new TextEncoder();
-    const [eerste, tweede] = await Promise.all([
-        crypto.subtle.digest('SHA-256', encoder.encode(a)),
-        crypto.subtle.digest('SHA-256', encoder.encode(b)),
-    ]);
-    return crypto.subtle.timingSafeEqual(eerste, tweede);
 }

@@ -7,19 +7,30 @@
 //                              aanpaste, voor elke pagina van de site   → instellingen.js
 //   POST /admin/aanmelden      aanmelden op de adminpagina (/admin/)    → instellingen.js
 //   PUT  /admin/instellingen   nieuwe prijzen en meldingen bewaren      → instellingen.js
+//   PUT  /beschikbaarheid      de volgeboekte nachten die het kassasysteem
+//                              doorstuurt bewaren                       → beschikbaarheid.js
 //
 // Instellingen staan in wrangler.jsonc, wachtwoorden als geheim bij Cloudflare
 // (zie README.md in deze map).
 import { handleAanvraag } from './aanvraag.js';
+import { handleBeschikbaarheid } from './beschikbaarheid.js';
 import { handleInstellingen } from './instellingen.js';
 import { reply } from './antwoord.js';
 
 export default {
     async fetch(request, env) {
+        // Met of zonder schuine streep op het einde is hetzelfde adres
+        const pad = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
+
+        // Het kassasysteem stuurt de volgeboekte nachten door. Dat komt niet uit een
+        // browser: er is geen Origin, wel een geheime sleutel (zie beschikbaarheid.js).
+        const doorgestuurd = await handleBeschikbaarheid(request, env, pad);
+        if (doorgestuurd) return doorgestuurd;
+
         const allowedOrigins = env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim());
         const origin = request.headers.get('Origin');
 
-        // Enkel aanvragen vanaf de eigen site aannemen
+        // Al het andere komt van de website zelf; enkel die adressen mogen binnen
         if (!allowedOrigins.includes(origin)) {
             return reply(403, { success: false, message: 'Niet toegestaan' });
         }
@@ -35,9 +46,6 @@ export default {
         if (request.method === 'OPTIONS') {
             return new Response(null, { status: 204, headers: cors });
         }
-
-        // Met of zonder schuine streep op het einde is hetzelfde adres
-        const pad = new URL(request.url).pathname.replace(/\/+$/, '') || '/';
 
         if (pad === '/') {
             if (request.method !== 'POST') {

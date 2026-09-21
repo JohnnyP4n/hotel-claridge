@@ -75,10 +75,13 @@ function toonPromo(instellingen) {
 // De kalender op /boeking/ luistert hiernaar en sluit die dagen af. Komt dit bericht er
 // niet (geen boekingspagina, of Cloudflare onbereikbaar), dan blijft de kalender gewoon
 // open staan en vangt het script bij Cloudflare de aanvraag alsnog op.
+//
+// Twee bronnen samen: de periodes die het hotel zelf instelde op /admin/, en de nachten
+// die het kassasysteem als volgeboekt doorgaf. Die laatste tonen geen melding bovenaan —
+// ze sluiten enkel die nachten af in de kalender.
 function meldPeriodes(instellingen) {
-    document.dispatchEvent(
-        new CustomEvent('claridge-periodes', { detail: instellingen.sluitingen ?? [] }),
-    );
+    const periodes = [...(instellingen.sluitingen ?? []), ...(instellingen.volgeboekt?.periodes ?? [])];
+    document.dispatchEvent(new CustomEvent('claridge-periodes', { detail: periodes }));
 }
 
 

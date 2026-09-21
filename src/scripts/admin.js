@@ -15,6 +15,8 @@ const promo = document.getElementById('promo');
 const periodes = document.getElementById('periodes');
 const geenPeriodes = document.getElementById('geen-periodes');
 const sjabloon = document.getElementById('periode-sjabloon');
+const volgeboekt = document.getElementById('volgeboekt');
+const volgeboektStatus = document.getElementById('volgeboekt-status');
 const opslaanKnop = document.getElementById('opslaan');
 const statusregel = document.getElementById('status');
 
@@ -131,9 +133,11 @@ async function laad() {
 
         const bewaard = await antwoord.json();
         vul(samen(bewaard));
+        toonVolgeboekt(bewaard.volgeboekt);
         meld(bewaard.bijgewerkt ? `Laatst bewaard op ${tijdstip(bewaard.bijgewerkt)}.` : 'Nog niets bewaard.');
     } catch (fout) {
         vul(standaard);
+        toonVolgeboekt(null);
         meld(`Ophalen mislukt (${fout.message}). Het formulier toont de standaardwaarden.`, 'mislukt');
     }
 }
@@ -184,6 +188,46 @@ function samen(bewaard) {
         extraBedden: { ...standaard.extraBedden, ...(bewaard.extraBedden ?? {}) },
         sluitingen: bewaard.sluitingen ?? [],
     };
+}
+
+// Alleen lezen: de nachten die het kassasysteem als volgeboekt doorgaf. Hier valt niets
+// in te stellen; het staat er om te kunnen nakijken of de koppeling nog loopt.
+function toonVolgeboekt(gegevens) {
+    const periodes = gegevens?.periodes ?? [];
+
+    volgeboektStatus.textContent =
+        periodes.length === 0
+            ? 'Niets doorgekregen: de kalender houdt op dit moment geen enkele nacht vrij van het kassasysteem.'
+            : `${nachten(periodes)} volgeboekt, doorgegeven op ${tijdstip(gegevens.bijgewerkt)}.`;
+
+    volgeboekt.replaceChildren(
+        ...periodes.map((periode) => {
+            const regel = document.createElement('li');
+            regel.textContent =
+                periode.van === periode.tot
+                    ? korteDatum(periode.van)
+                    : `${korteDatum(periode.van)} - ${korteDatum(periode.tot)}`;
+            return regel;
+        }),
+    );
+}
+
+// Het aantal nachten in alle periodes samen, bv. "7 nachten"
+function nachten(periodes) {
+    const dag = 24 * 60 * 60 * 1000;
+    const aantal = periodes.reduce(
+        (som, periode) => som + Math.round((Date.parse(periode.tot) - Date.parse(periode.van)) / dag) + 1,
+        0,
+    );
+    return `${aantal} ${aantal === 1 ? 'nacht' : 'nachten'}`;
+}
+
+// bv. "10 juli"
+function korteDatum(waarde) {
+    const moment = new Date(`${waarde}T00:00:00`);
+    return Number.isNaN(moment.getTime())
+        ? waarde
+        : moment.toLocaleDateString('nl-BE', { day: 'numeric', month: 'long' });
 }
 
 function meld(tekst, soort = '') {

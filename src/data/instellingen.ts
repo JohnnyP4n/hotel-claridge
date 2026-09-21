@@ -30,6 +30,20 @@ export interface Sluiting {
   tekst: string;
 }
 
+/**
+ * De nachten die het kassasysteem als volgeboekt doorgaf, samengevat in periodes
+ * (JJJJ-MM-DD, tot en met). Dit deel wordt NIET op /admin/ ingesteld en ook niet
+ * bewaard vanuit de adminpagina: het script bij Cloudflare voegt het toe aan het
+ * antwoord van GET /instellingen, en enkel als de lijst recent genoeg is.
+ *
+ * De kalender op /boeking/ sluit die nachten af; er komt geen melding bovenaan.
+ */
+export interface Volgeboekt {
+  periodes: { van: string; tot: string }[];
+  /** Wanneer het kassasysteem de lijst laatst doorstuurde (ISO-tijdstempel) */
+  bijgewerkt: string;
+}
+
 export interface Instellingen {
   /** Prijs per kamer per nacht, per kamer-id uit src/data/rooms.ts */
   kamers: Record<string, { laag: number; hoog: number }>;
@@ -42,6 +56,8 @@ export interface Instellingen {
   sluitingen: Sluiting[];
   /** Wanneer het hotel de instellingen laatst bewaarde; ontbreekt bij de standaard */
   bijgewerkt?: string;
+  /** Automatisch uit het kassasysteem; nooit ingesteld of bewaard via /admin/ */
+  volgeboekt?: Volgeboekt;
 }
 
 /** De instellingen zoals ze in deze map staan: het vertrekpunt van de adminpagina */

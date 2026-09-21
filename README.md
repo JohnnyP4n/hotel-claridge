@@ -71,6 +71,14 @@ Aanmelden gebeurt met één wachtwoord, dat als geheim bij Cloudflare staat
 (`ADMIN_WACHTWOORD`, zie `worker/README.md`). De pagina staat niet in het menu en niet in
 Google.
 
+Onderaan `/admin/` staat ook **"Volgeboekt volgens het kassasysteem"**. Dat is enkel om na
+te kijken: het kassasysteem geeft elk uur automatisch door welke nachten helemaal vol zitten,
+en die nachten zijn dan niet meer te kiezen in het aanvraagformulier — zonder melding bovenaan
+de site. Blijft die lijst langer dan zes uur uit, dan wordt ze genegeerd en staat de kalender
+weer volledig open. De installatie staat in `supabase/functions/beschikbaarheid/README.md`
+van het project `hotelkassasysteem`; aan deze kant hoort er één geheim bij
+(`SYNC_SLEUTEL`, zie `worker/README.md`).
+
 Het opslaan gaat naar hetzelfde script bij Cloudflare als het aanvraagformulier, dat alles
 bewaart in Cloudflare KV. **De site moet er niet voor herbouwd worden:** elke pagina haalt
 de instellingen op bij het laden en past ze meteen toe (`src/scripts/instellingen.js`).

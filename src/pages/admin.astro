@@ -179,6 +179,19 @@ const bedden = extraBeds
         <button type="button" class="btn btn-outline" id="periode-toevoegen">Periode toevoegen</button>
       </section>
 
+      <section class="card admin-kaart">
+        <h2>Volgeboekt volgens het kassasysteem</h2>
+        <p class="admin-uitleg">
+          Het kassasysteem geeft automatisch door welke nachten helemaal vol zitten. Die
+          nachten zijn niet te kiezen in het aanvraagformulier, zonder melding bovenaan de
+          site. Hier valt niets in te stellen: het is enkel om na te kijken of de koppeling
+          nog loopt. Blijft de lijst langer dan zes uur uit, dan negeert de site ze en staat
+          de kalender weer helemaal open.
+        </p>
+        <p class="admin-leeg" id="volgeboekt-status">Nog niets doorgekregen.</p>
+        <ul class="admin-volgeboekt" id="volgeboekt"></ul>
+      </section>
+
       <div class="admin-opslaan">
         <button type="submit" class="btn btn-primary" id="opslaan">Opslaan</button>
         <button type="button" class="btn btn-outline" id="afmelden">Afmelden</button>
@@ -363,6 +376,23 @@ const bedden = extraBeds
     height: 22px;
     flex-shrink: 0;
     accent-color: var(--color-primary);
+  }
+
+  /* Volgeboekt volgens het kassasysteem (alleen lezen) */
+  .admin-volgeboekt {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .admin-volgeboekt li {
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 0.9rem;
   }
 
   /* Gesloten periodes */
