@@ -195,10 +195,11 @@ function samen(bewaard) {
 function toonVolgeboekt(gegevens) {
     const periodes = gegevens?.periodes ?? [];
 
-    volgeboektStatus.textContent =
-        periodes.length === 0
-            ? 'Niets doorgekregen: de kalender houdt op dit moment geen enkele nacht vrij van het kassasysteem.'
-            : `${nachten(periodes)} volgeboekt, doorgegeven op ${tijdstip(gegevens.bijgewerkt)}.`;
+    volgeboektStatus.textContent = !gegevens
+        ? 'Niets doorgekregen: het kassasysteem stuurde nog niets door, of de laatste lijst is ouder dan zes uur.'
+        : periodes.length === 0
+          ? `Geen enkele nacht volgeboekt. Laatst doorgegeven op ${tijdstip(gegevens.bijgewerkt)}.`
+          : `${nachten(periodes)} volgeboekt, doorgegeven op ${tijdstip(gegevens.bijgewerkt)}.`;
 
     volgeboekt.replaceChildren(
         ...periodes.map((periode) => {

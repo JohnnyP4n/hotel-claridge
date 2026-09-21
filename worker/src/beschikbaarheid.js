@@ -46,8 +46,9 @@ export async function volgeboektePeriodes(env) {
     // Voorbije nachten mogen weg: de kalender begint toch pas vandaag.
     const vanaf = vandaag();
     const nachten = bewaard.nachten.filter((nacht) => nacht >= vanaf);
-    if (nachten.length === 0) return null;
 
+    // Ook een lege lijst gaat mee: dan sluit de kalender niets af, maar ziet de
+    // adminpagina wel dat de koppeling nog loopt.
     return { periodes: periodes(nachten), bijgewerkt: bewaard.bijgewerkt };
 }
 
