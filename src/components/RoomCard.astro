@@ -100,6 +100,27 @@ const bookingHref = `${bookingPath(locale)}?kamer=${encodeURIComponent(room.code
     transform: translateY(-4px);
   }
 
+  /* In het overzicht delen de kaarten van één rij dezelfde rijen (foto, titel, prijs),
+     zodat de prijsbalk en de pijl overal even hoog staan, ook als één prijs over twee regels loopt */
+  .compact {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
+  .compact .body {
+    display: contents;
+  }
+
+  .compact h3 {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .compact .footer {
+    margin: 0 1.5rem 1.5rem;
+  }
+
   .media {
     position: relative;
     aspect-ratio: 4 / 3;
@@ -214,6 +235,12 @@ const bookingHref = `${bookingPath(locale)}?kamer=${encodeURIComponent(room.code
     border-top: 1px solid var(--color-line);
   }
 
+  /* De pijl blijft rechts naast de prijs, ook als die niet op één regel past */
+  .compact .footer {
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+  }
+
   .price {
     color: var(--color-muted);
     font-size: 0.92rem;
@@ -228,6 +255,7 @@ const bookingHref = `${bookingPath(locale)}?kamer=${encodeURIComponent(room.code
 
   .more {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 40px;
